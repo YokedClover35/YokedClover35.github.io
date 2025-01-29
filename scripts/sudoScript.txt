@@ -1,0 +1,10 @@
+X-initialize all points and assign random velocities
+X-create a hashmap using a single integer storing both x,y as the key and the item being the point
+-handle proximity detection using a small hash grid for particle to particle collision
+-handle proximity detection to mouse using a simple 0(N) algorithm
+-create lines between close enough points (must be smaller than the grid?)
+-create triangles using the lines and decide color based on the center of the triangle
+-...
+
+--Remember--
+-make resizing work
