@@ -131,9 +131,10 @@ class LinkedList {
 class Tile {
     constructor() {
         this.points = new LinkedList(undefined, undefined);
-        this.completed = false;
+        this.optimized = false;
         this.avgCenterX;
         this.avgCenterY;
+        this.avgPoint = new Point(0,0,0,0,0);
         this.numPoints = 0;
     }
 
@@ -161,6 +162,8 @@ class Tile {
             this.avgCenterX /= count;
             this.avgCenterY /= count;
         }
+        this.avgPoint.x = this.avgCenterX;
+        this.avgPoint.y = this.avgCenterY;
     }
 
     drawPoints(ctx) {
@@ -219,27 +222,16 @@ class ArrayGrid {
         }
     }
 
-    // function initMap(width, height) {
-    //     let rowTiles = Math.floor(height / this.tileSize) + (height % this.tileSize == 0 ? 0 : 1);
-    //     let colTiles = Math.floor(width / this.tileSize) + (width % this.tileSize == 0 ? 0 : 1);
-    //     console.log("rowTiles: " + rowTiles + " colTiles: " + colTiles);
-    //     console.log("width: " + width + " height: " + height);
-    //     for (let i = 0; i < rowTiles; i++) {
-    //         for (let j = 0; j < colTiles; j++) {
-    //             pointMap.set(xyGridHash(j, i), new Array());
-    //         }
-    //     }
-    // }
-
-    updateAll(time) {
-        this.collideAll(time, points);
-        this.moveAll(time, points);
-    }
-
-    collideAll(time, points) {
-        for (let i = 0; i < points.length; i++) {
-            let p = points[i];
-            p.collide(time, pointMap);
+    optimizeTiles() {
+        for (let i = 0; i < this.xLength; i++) {
+            for (let j = 0; j < this.yLength; j++) {
+                if(this.tiles[i][j].numPoints > pointCutoff) {
+                    this.tiles[i][j].calculateCenter();
+                    this.tiles[i][j].optimized = true;
+                } else {
+                    this.tiles[i][j].optimized = false;
+                }
+            }
         }
     }
 
@@ -282,12 +274,16 @@ class ArrayGrid {
         }
     }
     applyPhisicsFromTile(time, point, tile) {
-        let sublist = tile.points;
-        while (!sublist.isEmpty()) {
-            if (point != sublist.item) {
-                point.collideWithPoint(time, sublist.item, 1);
+        if (tile.optimized) {
+            point.collideWithPoint(time, tile.avgPoint, tile.pointCount);
+        } else {
+            let sublist = tile.points;
+            while (!sublist.isEmpty()) {
+                if (point != sublist.item) {
+                    point.collideWithPoint(time, sublist.item, 1);
+                }
+                sublist = sublist.next;
             }
-            sublist = sublist.next;
         }
 
     }
@@ -299,7 +295,7 @@ class ArrayGrid {
     Postcondition: nothing is changed
     */
     numPointsAt(gx, gy) {
-        return this.tiles[gx][gy].points.length();
+        return this.tiles[gx][gy].numPoints;
     }
 
     /*
@@ -599,13 +595,16 @@ canvasHeight = canvas.height;
 // const pointMap = new Map();
 console.log("canvas.width: " + canvas.width + " canvas.height " + canvas.height);
 const pointGrid = new ArrayGrid(Math.max(canvas.width, canvas.height) / 20);
-const pointCount = 1000;
+const pointCount = 500;
+const pointCutoff = 3;
 const timeStep = .5;
-let frametimes = new Array(50).fill(0);
+let totalFramerate = new Array(50).fill(0);
+let stepFramerate = new Array(50).fill(0);
+let stepFrametime = new Array(50).fill(0);
 let index = 0;
 // const points = [];
 // let lines = [];
-const debug = true;
+const debug = false;
 const pointRadius = 10;
 let maxCursorInteractionDistance = 1000;
 let cursorRingDistance = maxCursorInteractionDistance / 4;
@@ -633,6 +632,7 @@ function test() {
 
 }
 //test();
+let prevTime = Date.now();
 
 function main() {
     
@@ -654,6 +654,10 @@ function run() {
     if(running) {
         requestAnimationFrame(run);
     }
+    let dt = Date.now() - prevTime;
+    prevTime = Date.now()
+    drawFrameTime("Total", 0, dt, totalFramerate);
+    index ++;
 }
 
 function stop() {
@@ -667,7 +671,7 @@ function step() {
     pointGrid.moveAll(timeStep);
     pointGrid.applyPhisicsAll(timeStep);
     let dt = Date.now() - start;
-    drawFrameTime(dt);
+    drawFrameTime("Step", 60, dt, stepFrametime);    
     // updateAll(timeStep);
     // drawLines(lines);
     //console.log(lines);
@@ -677,12 +681,13 @@ function step() {
 
 }
 
-function drawFrameTime(dt) {
-    frametimes[index % frametimes.length] = dt;
-    index ++;
+function drawFrameTime(title, y, dt, times) {
+    times[index %= times.length] = dt;
+    ctx.fillStyle = 'black';
     ctx.font = "20px serif";
     let margin = 20;
-    ctx.fillText(avgArray(frametimes), margin, margin);
+    ctx.fillText(title + " ms: " + avgArray(times), margin, margin + y);
+    ctx.fillText(title + " fps: " + (1000/ avgArray(times)), margin, margin + y + 30);
 }
 
 function avgArray(A) {
