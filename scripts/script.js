@@ -9,6 +9,10 @@ window.addEventListener('resize', function (event) {
     updateWindowSize();
 }, true);
 
+canvas.addEventListener('contextmenu', function(event) {
+    event.preventDefault();
+});
+
 let cursorX, cursorY, cursorDX, cursorDY = 0;
 let button1, button2, button3 = false;
 function setMousePosVel(e) {
@@ -30,6 +34,7 @@ canvas.addEventListener("mousedown", function (e) {
             button1 = true;
             break;
         case 1:
+            e.preventDefault();
             button2 = true;
             break;
         case 2:
@@ -47,10 +52,17 @@ canvas.addEventListener("mouseup", function (e) {
             button2 = false;
             break;
         case 2:
+            e.preventDefault();
             button3 = false;
             break;
     }
 });
+
+canvas.addEventListener("wheel", function(e) {
+    e.preventDefault();
+    maxCursorInteractionDistance -= e.deltaY;
+    console.log(maxCursorInteractionDistance);
+})
 
 
 
@@ -186,7 +198,18 @@ class Point {
 
         } else if (button1) {
             let distTo = this.distToXY(cursorX, cursorY);
-            let force = this.calcCursorAttractionForce(distTo, 1000);
+            let force = this.calcCursorAttractionForce(distTo, maxCursorInteractionDistance);
+            let angle = this.angleToXY(cursorX, cursorY);
+            this.accVA(force, angle);
+        } else if (button2) {
+            let distTo = this.distToXY(cursorX, cursorY);
+
+            let force = (distTo < cursorRingDistance) ? -this.calcCursorAttractionForce(distTo, maxCursorInteractionDistance) : this.calcCursorAttractionForce(distTo, maxCursorInteractionDistance);
+            let angle = this.angleToXY(cursorX, cursorY);
+            this.accVA(force, angle);
+        } else if (button3) {
+            let distTo = this.distToXY(cursorX, cursorY);
+            let force = -this.calcCursorAttractionForce(distTo, maxCursorInteractionDistance);
             let angle = this.angleToXY(cursorX, cursorY);
             this.accVA(force, angle);
         }
@@ -223,7 +246,7 @@ class Point {
         } else {
             this.y += dY;
         }
-        this.reduceVel(time, 0.01, 1);
+        this.reduceVel(time, 0.0025, 1);
     }
     reduceVel(time, factor, maxVel) {
         let abVelX = Math.abs(this.velX);
@@ -261,6 +284,8 @@ const points = [];
 let lines = [];
 const debug = true;
 const pointRadius = 10;
+let maxCursorInteractionDistance = 1000;
+let cursorRingDistance = maxCursorInteractionDistance / 4;
 
 // Initialize the context
 const ctx = canvas.getContext("2d");
