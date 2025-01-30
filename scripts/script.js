@@ -515,7 +515,7 @@ function updateWindowSize() {
     canvas.height = this.window.innerHeight;
     canvasWidth = canvas.width;
     canvasHeight = canvas.height;
-    gridSize = Math.floor(canvasHeight / 20);
+    gridSize = Math.floor(Math.max(canvasHeight, canvasWidth) / 20);
 }
 
 
