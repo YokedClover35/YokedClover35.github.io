@@ -3,19 +3,20 @@ const canvas = document.querySelector(canvasId);
 
 
 
+
 //event listeners
 
-// window.addEventListener('resize', updateWindowSize, true);
+window.addEventListener('resize', updateWindowSize, true);
 
-// function updateWindowSize(e) {
-//     canvas.width = this.window.innerWidth;
-//     canvas.height = this.window.innerHeight;
-//     canvasWidth = canvas.width;
-//     canvasHeight = canvas.height;
-//     pointGrid.resize(canvasWidth, canvasHeight);
-// }
+function updateWindowSize(e) {
+    canvas.width = this.window.innerWidth;
+    canvas.height = this.window.innerHeight;
+    canvasWidth = canvas.width;
+    canvasHeight = canvas.height;
+    pointGrid.resize(canvasWidth, canvasHeight);
+}
 
-canvas.addEventListener('contextmenu', function(event) {
+canvas.addEventListener('contextmenu', function (event) {
     event.preventDefault();
 });
 
@@ -64,18 +65,18 @@ canvas.addEventListener("mouseup", function (e) {
     }
 });
 
-canvas.addEventListener("wheel", function(e) {
+canvas.addEventListener("wheel", function (e) {
     e.preventDefault();
     maxCursorInteractionDistance -= e.deltaY;
     console.log(maxCursorInteractionDistance);
-})
+});
 
 
 
 
 
 //LinkedList class
-class LinkedList{
+class LinkedList {
     constructor(item, next) {
         this.item = item;
         this.next = next;
@@ -85,7 +86,7 @@ class LinkedList{
             return 0;
         }
         return 1 + this.next.length();
-        
+
     }
     append(item) {
         if (this.isEmpty()) {
@@ -96,17 +97,17 @@ class LinkedList{
         }
     }
     removeItem(item) {
-        if(this.isEmpty()) {
+        if (this.isEmpty()) {
             return false;
-        } else if(this.item == item) {
+        } else if (this.item == item) {
             this.remove();
             return true;
         }
         return this.next.removeItem();
     }
     remove() {
-        this.item = this.next().item();
-        this.next = this.next().next;
+        this.item = this.next.item;
+        this.next = this.next.next;
     }
     advance(n) {
         if (n <= 0) {
@@ -114,11 +115,11 @@ class LinkedList{
         } else if (this.isEmpty()) {
             return null;
         } else {
-            return this.next().advance(n - 1);
+            return this.next.advance(n - 1);
         }
     }
     at(p) {
-        return this.advance(p).item();
+        return this.advance(p).item;
     }
     isEmpty() {
         return this.item == null;
@@ -127,24 +128,24 @@ class LinkedList{
 
 
 //Tile class
-class Tile{
+class Tile {
     constructor() {
         this.points = new LinkedList(null, null);
         this.completed = false;
         this.avgCenterX;
         this.avgCenterY;
-        this.pointCount = 0; 
+        this.numPoints = 0;
     }
 
     addPoint(p) {
-        pointCount ++;
-        LinkedList.append(p);
+        this.numPoints++;
+        this.points.append(p);
     }
     removePoint(p) {
-        (points.removeItem(p)) ? pointCount-- : console.log("Could not remove point!");
+        (this.points.removeItem(p)) ? this.numPoints-- : console.log("Could not remove point!");
     }
     calculateCenter() {
-        let sublist = points;
+        let sublist = this.points;
         this.avgCenterX = 0;
         this.avgCenterY = 0;
         let count = 0;
@@ -154,8 +155,8 @@ class Tile{
             sublist = sublist.entries;
             count++;
         }
-        if(count == 0 || count != this.pointCount) {
-            console.log("point sount and true count are different! pointCount: " + this.pointCount + " trueCount: " + count);
+        if (count == 0 || count != this.numPoints) {
+            console.log("point sount and true count are different! numPoints: " + this.numPoints + " trueCount: " + count);
         } else {
             this.avgCenterX /= count;
             this.avgCenterY /= count;
@@ -164,7 +165,8 @@ class Tile{
 
     drawPoints(ctx) {
         let sublist = this.points;
-        while(!sublist.isEmpty()) {
+        while (!sublist.isEmpty()) {
+            let p = sublist.item;
             let vel = Math.sqrt(p.velX * p.velX + p.velY * p.velY);
             DrawHelper.drawCircle(p.x, p.y, p.radius, [(vel) * 10, (vel) * 10, 255]);
             sublist = sublist.next;
@@ -186,12 +188,14 @@ class ArrayGrid {
         this.xLength = Math.floor(height / this.tileSize) + (height % this.tileSize == 0 ? 0 : 1) + 1;
         this.yLength = Math.floor(width / this.tileSize) + (width % this.tileSize == 0 ? 0 : 1) + 1;
         console.log(this.xLength);
+        console.log("tileSize: " + this.tileSize);
         for (let i = 0; i < this.xLength; i++) {
-            if(this.tiles[i] == undefined) {
+            console.log(this.tiles);
+            if (this.tiles[i] == undefined) {
                 this.tiles.push([]);
             }
             for (let j = 0; j < this.yLength; j++) {
-                if(this.tiles[i][j] == undefined) {
+                if (this.tiles[i][j] == undefined) {
                     this.tiles[i].push(new Tile());
                 }
             }
@@ -201,23 +205,16 @@ class ArrayGrid {
 
     init(pointCount, maxVel) {
         this.resize(canvasWidth, canvasHeight);
-        this.initalizeTiles();
         this.initalizePoints(pointCount, maxVel);
     }
 
-    initalizeTiles() {
-        for (let i = 0; i < this.xLength; i++) {
-            this.tiles.push([]);
-            for (let j = 0; j < this.yLength; j++) {
-                this.tiles[i].push(new Tile());
-            }
-        }
-    }
 
     initalizePoints(pointCount, maxVel) {
+        console.log("canvasWidth: " + canvasWidth + " canvasHeight: " + canvasHeight);
+        console.log("tileSize: " + this.tileSize);
         for (let i = 0; i < pointCount; i++) {
-            let point = new Point(Math.floor(Math.random() * 200),
-                Math.floor(Math.random() * 200),
+            let point = new Point(Math.floor(Math.random() * canvasWidth),
+                Math.floor(Math.random() * canvasHeight),
                 (Math.random() * maxVel * 2) - maxVel,
                 (Math.random() * maxVel * 2) - maxVel,
                 pointRadius);
@@ -227,8 +224,8 @@ class ArrayGrid {
     }
 
     // function initMap(width, height) {
-    //     let rowTiles = Math.floor(height / gridSize) + (height % gridSize == 0 ? 0 : 1);
-    //     let colTiles = Math.floor(width / gridSize) + (width % gridSize == 0 ? 0 : 1);
+    //     let rowTiles = Math.floor(height / this.tileSize) + (height % this.tileSize == 0 ? 0 : 1);
+    //     let colTiles = Math.floor(width / this.tileSize) + (width % this.tileSize == 0 ? 0 : 1);
     //     console.log("rowTiles: " + rowTiles + " colTiles: " + colTiles);
     //     console.log("width: " + width + " height: " + height);
     //     for (let i = 0; i < rowTiles; i++) {
@@ -242,18 +239,24 @@ class ArrayGrid {
         this.collideAll(time, points);
         this.moveAll(time, points);
     }
-    
+
     collideAll(time, points) {
         for (let i = 0; i < points.length; i++) {
             let p = points[i];
             p.collide(time, pointMap);
         }
     }
-    
-    moveAll(time, points) {
-        for (let i = 0; i < points.length; i++) {
-            let p = points[i];
-            p.move(time); //this should also call this.moveOnGrid()
+
+    moveAll(time) {
+        for (let i = 0; i < this.xLength; i++) {
+            for (let j = 0; j < this.yLength; j++) {
+                let sublist = this.tiles[i][j].points;
+                while (!sublist.isEmpty()) {
+                    let p = sublist.item;
+                    p.move(time); //this should also call this.moveOnGrid()
+                    sublist = sublist.next;
+                }
+            }
         }
     }
 
@@ -273,7 +276,7 @@ class ArrayGrid {
     applyPhisicsPoint(time, point) {
         for (let i = -1; i <= 1; i++) {
             for (let j = -1; j <= 1; j++) {
-                if(i >= 0 && j >= 0 && i < this.xLength && j < this.yLength) {
+                if (i >= 0 && j >= 0 && i < this.xLength && j < this.yLength) {
                     this.collideWithPoints(time, point, this.tiles[i][j]);
                 }
             }
@@ -297,7 +300,7 @@ class ArrayGrid {
     Postcondition: nothing is changed
     */
     numPointsAt(gx, gy) {
-        return this[gx][gy].length();
+        return this.tiles[gx][gy].points.length();
     }
 
     /*
@@ -306,10 +309,10 @@ class ArrayGrid {
     Postcondition: point if moved from grid[gx1][gy1] to grid[gx2][gy2]
     */
     moveOnGrid(p, x1, y1, x2, y2) {
-        let gx1 = toGridCoord(x1);
-        let gy1 = toGridCoord(y1); 
-        let gx2 = toGridCoord(x2); 
-        let gy2 = toGridCoord(y2);
+        let gx1 = this.toGridCoord(x1);
+        let gy1 = this.toGridCoord(y1);
+        let gx2 = this.toGridCoord(x2);
+        let gy2 = this.toGridCoord(y2);
         if (gx1 != gx2 && gy1 != gy2) {
             this.removePointgc(p, gx1, gy1);
             this.addPointgc(p, gx2, gy2);
@@ -325,7 +328,8 @@ class ArrayGrid {
     */
     addPointgc(p, gx, gy) {
         console.log("gx: " + gx + " gy: " + gy);
-        this[gx][gy].append(p);
+        console.log(this.tiles[gx][gy]);
+        this.tiles[gx][gy].addPoint(p);
     }
 
     addPointac(p) {
@@ -338,7 +342,7 @@ class ArrayGrid {
     Postcondition: point p is removed from grid[gx][gy]
     */
     removePointgc(p, gx, gy) {
-        this[gx][gy].remove(p);
+        this.tiles[gx][gy].removePoint(p);
     }
 
     removePointac(p) {
@@ -355,7 +359,7 @@ class ArrayGrid {
 
     drawAll(ctx) {
         for (let i = 0; i < this.xLength; i++) {
-            for(let j = 0; j < this.yLength; j++) {
+            for (let j = 0; j < this.yLength; j++) {
                 this.tiles[i][j].drawPoints(ctx);
             }
         }
@@ -366,15 +370,15 @@ class ArrayGrid {
 
     drawDebug(ctx) {
         let margin = 0.05;
-        let marginTrue = margin * gridSize;
+        let marginTrue = margin * this.tileSize;
         ctx.globalAlpha = 0.25;
         ctx.font = "20px serif";
-        for (let i = 0; i < rowTiles; i++) {
-            for (let j = 0; j < colTiles; j++) {
+        for (let i = 0; i < this.yLength; i++) {
+            for (let j = 0; j < this.xLength; j++) {
                 ctx.fillStyle = 'blue';
-                ctx.fillRect(gridSize * j + marginTrue, gridSize * i + marginTrue, gridSize - marginTrue * 2, gridSize - marginTrue * 2);
+                ctx.fillRect(this.tileSize * j + marginTrue, this.tileSize * i + marginTrue, this.tileSize - marginTrue * 2, this.tileSize - marginTrue * 2);
                 ctx.fillStyle = 'black';
-                ctx.fillText(this.numPointsAt(j, i), gridSize * j + marginTrue, gridSize * i + marginTrue + 20);
+                ctx.fillText(this.numPointsAt(j, i), this.tileSize * j + marginTrue, this.tileSize * i + marginTrue + 20);
             }
         }
         ctx.globalAlpha = 1.0;
@@ -387,7 +391,7 @@ class ArrayGrid {
 //draw class
 class DrawHelper {
     // drawing helper functions
-    drawCircle(x, y, size, color) {
+    static drawCircle(x, y, size, color) {
         ctx.beginPath();
         ctx.fillStyle = this.colorToString(color);
         ctx.arc(x, y, size, 0, Math.PI * 2);
@@ -395,7 +399,7 @@ class DrawHelper {
         ctx.fill();
     }
 
-    drawLine(x1, y1, x2, y2, lineWidth, lineCap) {
+    static drawLine(x1, y1, x2, y2, lineWidth, lineCap) {
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineWidth = lineWidth;
@@ -404,7 +408,7 @@ class DrawHelper {
         ctx.stroke();
     }
 
-    drawShape(ctx, points, lineWidth, lineColor, fillColor) {
+    static drawShape(ctx, points, lineWidth, lineColor, fillColor) {
         ctx.beginPath();
         ctx.lineWidth = lineWidth;
         ctx.strokeStyle = this.colorToString(lineColor);
@@ -418,13 +422,13 @@ class DrawHelper {
         ctx.stroke();
     }
 
-    colorToString(color) {
+    static colorToString(color) {
         return `rgb(${color[0]},
                     ${color[1]},
                     ${color[2]})`;
     }
 
-    calculateShapeCenter(points) {
+    static calculateShapeCenter(points) {
         let sumX = 0;
         let sumY = 0;
         let pointCount = points.length;
@@ -435,7 +439,7 @@ class DrawHelper {
         return [sumX / pointCount, sumY / pointCount];
     }
 
-    calculateShapeColor(points, color1X, color2X, color1Y, color2Y) {
+    static calculateShapeColor(points, color1X, color2X, color1Y, color2Y) {
         let point = this.calculateShapeCenter(points);
         let color = [255, 19, 140]; //initialize color with 'error' color of pink
         for (let i = 0; i < 3; i++) {
@@ -444,7 +448,7 @@ class DrawHelper {
         return color;
     }
 
-    drawLines(lines) {
+    static drawLines(lines) {
         ctx.globalAlpha = 0.25;
         for (let i = 0; i < lines.length; i += 4) {
             this.drawLine(lines[i], lines[i + 1], lines[i + 2], lines[i + 3], 2, 'round');
@@ -496,7 +500,7 @@ class Point {
     }
     collideWithPoint(time, point, multiplier) {
         let distTo = this.distToPoint(point);
-        if (distTo < gridSize) {
+        if (distTo < pointGrid.tileSize) {
             this.accVA(.5 * time * this.calcForceFromPoint(distTo) * multiplier, this.angleToPoint(point));
             // if(i > 0 || i == 0 && j > -1) {
             //     this.saveLine(this, point);
@@ -504,8 +508,8 @@ class Point {
         }
     }
     calcForceFromPoint(distance) {
-        return -1 * Math.cos(Math.PI * distance / (2 * .8 * gridSize));
-        //return -0.1 * (1 - distance / gridSize);
+        return -1 * Math.cos(Math.PI * distance / (2 * .8 * pointGrid.tileSize));
+        //return -0.1 * (1 - distance / pointGrid.tileSize);
     }
     cursorColl() {
 
@@ -531,13 +535,13 @@ class Point {
             let angle = this.angleToXY(cursorX, cursorY);
             this.accVA(force, angle);
         }
-        
+
     }
     calcCursorCarryForce(distance, maxDistance) {
         return (distance >= maxDistance) ? 0 : Math.sqrt(maxDistance - distance) / maxDistance;
     }
     calcCursorAttractionForce(distance, maxDistance) {
-        
+
         //return Math.max(-(distance / maxDistance) + 0.25, 0); 
         // return Math.atan(-2 * Math.PI - distance) + Math.PI / 2;
         return (distance >= maxDistance) ? 0 : (1 - distance / maxDistance) * 0.5;
@@ -546,18 +550,18 @@ class Point {
         let prevX = this.x;
         let prevY = this.y;
         let dX = this.velX * time;
-        if(this.x + dX > canvasWidth - this.radius) {
+        if (this.x + dX > canvasWidth - this.radius) {
             this.x += canvasWidth - this.radius - this.x - dX;
             this.velX *= -0.75;
         } else if (this.x + dX < this.radius) {
             this.x += this.radius - dX - this.x;
-            this.velX *= -0.75
+            this.velX *= -0.75;
         } else {
             this.x += dX;
         }
-        
+
         let dY = this.velY * time;
-        if(this.y + dY > canvasHeight - this.radius) {
+        if (this.y + dY > canvasHeight - this.radius) {
             this.y += canvasHeight - this.radius - this.y - dY;
             this.velY *= -0.75;
         } else if (this.y + dY < this.radius) {
@@ -588,12 +592,16 @@ class Point {
 
 
 
-let canvasWidth = 200;
-let canvasHeight = 200;
-let gridSize;
+let canvasWidth = canvas.width;
+let canvasHeight = canvas.height;
+canvas.width = this.window.innerWidth;
+canvas.height = this.window.innerHeight;
+canvasWidth = canvas.width;
+canvasHeight = canvas.height;
+// updateWindowSize(null);
 // const pointMap = new Map();
 console.log("canvas.width: " + canvas.width + " canvas.height " + canvas.height);
-const pointGrid = new ArrayGrid( 10 );//Math.max(canvas.width, canvas.height) / 20);
+const pointGrid = new ArrayGrid(Math.max(canvas.width, canvas.height) / 20);
 const pointCount = 100;
 const timeStep = .5;
 // const points = [];
@@ -609,13 +617,15 @@ const ctx = canvas.getContext("2d");
 
 
 function main() {
+    
+    console.log("canvasWidth: " + canvasWidth + " canvasHeight: " + canvasHeight);
     pointGrid.init(pointCount, 2);
     //testInit();
     for (let i = 0; i < 1; i++) {
         step();
     }
 
-    //run();
+    run();
 }
 main();
 
@@ -627,12 +637,13 @@ function run() {
 function step() {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     pointGrid.drawAll(ctx);
+    pointGrid.moveAll(timeStep);
     // updateAll(timeStep);
     // drawLines(lines);
     //console.log(lines);
     //containsRepeatingLines(lines);
     // lines = [];
-    
+
 
 }
 
@@ -661,12 +672,12 @@ function containsRepeatingLines(lines) {
             y2 = ty;
         }
         let hash = xyxyHash(Math.floor(x1), Math.floor(y1), Math.floor(x2), Math.floor(y2));
-        if(testMap.has(hash)) {
+        if (testMap.has(hash)) {
             found = true;
         } else {
-            testMap.add(hash)
+            testMap.add(hash);
         }
-        i+=4
+        i += 4;
     }
     console.log((!found) ? "No repeating lines!" : "Repeating Lines Found!");
 }
