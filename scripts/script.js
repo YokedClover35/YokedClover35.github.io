@@ -108,7 +108,7 @@ class LinkedList{
         } else if (this.isEmpty()) {
             return null;
         } else {
-            return this.next().advance( n - 1);
+            return this.next().advance(n - 1);
         }
     }
     at(p) {
@@ -120,12 +120,114 @@ class LinkedList{
 }
 
 
-//Grid class
-class Grid{
+//Tile class
+class Tile{
     constructor() {
-        this.points = null;
-        this.th;
+        this.points = new LinkedList(null, null);
+        this.completed = false;
+        this.avgCenterX;
+        this.avgCenterY;
+        this.pointCount = 0; 
     }
+
+    addPoint(p) {
+        pointCount ++;
+        LinkedList.append(p);
+    }
+    removePoint(p) {
+        (points.removeItem(p)) ? pointCount-- : console.log("Could not remove point!");
+    }
+    calculateCenter() {
+        let sublist = points;
+        this.avgCenterX = 0;
+        this.avgCenterY = 0;
+        let count = 0;
+        while (!sublist.isEmpty()) {
+            this.avgCenterX += list.item.x;
+            this.avgCenterY += list.item.y;
+            sublist = sublist.entries;
+            count++;
+        }
+        if(count == 0 || count != this.pointCount) {
+            console.log("point sount and true count are different! pointCount: " + this.pointCount + " trueCount: " + count);
+        } else {
+            this.avgCenterX /= count;
+            this.avgCenterY /= count;
+        }
+    }
+}
+
+
+//Grid class
+class ArrayGrid {
+    constructor(tileSize) {
+        this.tiles = [[]];
+        this.xLength;
+        this.yLength;
+        this.tileSize;
+    }
+
+    resize(width, height) {
+        this.xLength = Math.floor(height / tileSize) + (height % tileSize == 0 ? 0 : 1);
+        this.yLength = Math.floor(width / tileSize) + (width % tileSize == 0 ? 0 : 1);
+    }
+
+
+
+    /*
+    numPointsOnGridAt returns the number of points at the given location
+    Precondition: gx, gy >= 0; gx <= grid.length; gy <= grid[0].length
+    Postcondition: nothing is changed
+    */
+    numPointsAt(gx, gy) {
+        return this[gx][gy].length();
+    }
+
+    /*
+    moveOnGrid moves the given point p from one grid to another
+    Precondition: x1, y1, x2, y2 >= 0; x1, x2 <= canvas.width; y1, y2 <= canvas.height
+    Postcondition: point if moved from grid[gx1][gy1] to grid[gx2][gy2]
+    */
+    moveOnGrid(p, x1, y1, x2, y2) {
+        let gx1 = toGridCoord(x1);
+        let gy1 = toGridCoord(y1); 
+        let gx2 = toGridCoord(x2); 
+        let gy2 = toGridCoord(y2);
+        if (gx1 != gx2 && gy1 != gy2) {
+            this.removePoint(p, gx1, gy1);
+            this.addPoint(p, gx2, gy2);
+            return true;
+        }
+        return false;
+    }
+
+    /*
+    addPointToGrid adds the given point to the given grid cordinates
+    Precondition: gx, gy >= 0; gx <= grid.length; gy <= grid[0].length
+    Postcondition: a new point is added to grid[gx][gy]
+    */
+    addPoint(p, gx, gy) {
+        this[gx][gy].append(p);
+    }
+
+    /*
+    removePointFromGrid removes the given point from the given grid cordinates
+    Precondition: gx, gy >= 0; gx <= grid.length; gy <= grid[0].length; grid[gx][gy] contains point p
+    Postcondition: point p is removed from grid[gx][gy]
+    */
+    removePointFromGrid(grid, p, gx, gy) {
+        this[gx][gy].remove(p);
+    }
+
+    /*
+    toGridCord returns the correct index if the grid's position on the canvas
+    Precondition: n >= 0; n <= canvas's dimention
+    */
+    toGridCoord(n) {
+        return Math.floor(n / this.tileSize);
+    }
+
+
 }
 
 
