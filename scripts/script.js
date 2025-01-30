@@ -168,21 +168,26 @@ class Point {
         for (let i = -1; i <= 1; i++) {
             for (let j = -1; j <= 1; j++) {
                 let points = map.get(xyGridHash(this.gridX() + i, this.gridY() + j));
-                if (points != undefined) {
-                    for (let i = 0; i < points.length; i++) {
-                        if (this != points[i]) {
-                            let p = points[i];
-                            let distTo = this.distToPoint(p);
-                            if (distTo < gridSize) {
-                                this.accVA(.5 * time * this.calcForceFromPoint(distTo), this.angleToPoint(p));
-                                // if(i > 0 || i == 0 && j > -1) {
-                                //     this.saveLine(this, p);
-                                // }
-                            }
-                        }
-                    }
+                this.collideWithPoints(time, points, 1);
+            }
+        }
+    }
+    collideWithPoints(time, points, multiplier) {
+        if (points != undefined) {
+            for (let i = 0; i < points.length; i++) {
+                if (this != points[i]) {
+                    this.collideWithPoint(time, points[i]);
                 }
             }
+        }
+    }
+    collideWithPoint(time, point) {
+        let distTo = this.distToPoint(point);
+        if (distTo < gridSize) {
+            this.accVA(.5 * time * this.calcForceFromPoint(distTo), this.angleToPoint(point));
+            // if(i > 0 || i == 0 && j > -1) {
+            //     this.saveLine(this, point);
+            // }
         }
     }
     calcForceFromPoint(distance) {
