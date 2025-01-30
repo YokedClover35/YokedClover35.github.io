@@ -599,8 +599,10 @@ canvasHeight = canvas.height;
 // const pointMap = new Map();
 console.log("canvas.width: " + canvas.width + " canvas.height " + canvas.height);
 const pointGrid = new ArrayGrid(Math.max(canvas.width, canvas.height) / 20);
-const pointCount = 100;
+const pointCount = 1000;
 const timeStep = .5;
+let frametimes = new Array(50).fill(0);
+let index = 0;
 // const points = [];
 // let lines = [];
 const debug = true;
@@ -635,7 +637,7 @@ function test() {
 function main() {
     
     console.log("canvasWidth: " + canvasWidth + " canvasHeight: " + canvasHeight);
-    pointGrid.init(10, 2);
+    pointGrid.init(pointCount, 2);
     //testInit();
     for (let i = 0; i < 1; i++) {
         step();
@@ -659,10 +661,13 @@ function stop() {
 }
 
 function step() {
+    let start = Date.now();
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     pointGrid.drawAll(ctx);
     pointGrid.moveAll(timeStep);
     pointGrid.applyPhisicsAll(timeStep);
+    let dt = Date.now() - start;
+    drawFrameTime(dt);
     // updateAll(timeStep);
     // drawLines(lines);
     //console.log(lines);
@@ -670,6 +675,22 @@ function step() {
     // lines = [];
 
 
+}
+
+function drawFrameTime(dt) {
+    frametimes[index % frametimes.length] = dt;
+    index ++;
+    ctx.font = "20px serif";
+    let margin = 20;
+    ctx.fillText(avgArray(frametimes), margin, margin);
+}
+
+function avgArray(A) {
+    let sum = 0;
+    for (let i = 0; i < A.length; i++) {
+        sum += A[i];
+    }
+    return sum / A.length;
 }
 
 
