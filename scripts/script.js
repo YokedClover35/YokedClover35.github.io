@@ -103,7 +103,7 @@ class LinkedList {
             this.remove();
             return true;
         }
-        return this.next.removeItem();
+        return this.next.removeItem(item);
     }
     remove() {
         this.item = this.next.item;
@@ -113,7 +113,7 @@ class LinkedList {
         if (n <= 0) {
             return this;
         } else if (this.isEmpty()) {
-            return null;
+            return undefined;
         } else {
             return this.next.advance(n - 1);
         }
@@ -122,7 +122,7 @@ class LinkedList {
         return this.advance(p).item;
     }
     isEmpty() {
-        return this.item == null;
+        return this.item == undefined;
     }
 }
 
@@ -130,7 +130,7 @@ class LinkedList {
 //Tile class
 class Tile {
     constructor() {
-        this.points = new LinkedList(null, null);
+        this.points = new LinkedList(undefined, undefined);
         this.completed = false;
         this.avgCenterX;
         this.avgCenterY;
@@ -185,12 +185,9 @@ class ArrayGrid {
     }
 
     resize(width, height) {
-        this.xLength = Math.floor(height / this.tileSize) + (height % this.tileSize == 0 ? 0 : 1) + 1;
-        this.yLength = Math.floor(width / this.tileSize) + (width % this.tileSize == 0 ? 0 : 1) + 1;
-        console.log(this.xLength);
-        console.log("tileSize: " + this.tileSize);
+        this.xLength = Math.floor(width / this.tileSize) + (width % this.tileSize == 0 ? 0 : 1) + 1;
+        this.yLength = Math.floor(height / this.tileSize) + (height % this.tileSize == 0 ? 0 : 1) + 1;
         for (let i = 0; i < this.xLength; i++) {
-            console.log(this.tiles);
             if (this.tiles[i] == undefined) {
                 this.tiles.push([]);
             }
@@ -200,7 +197,6 @@ class ArrayGrid {
                 }
             }
         }
-        console.log(this);
     }
 
     init(pointCount, maxVel) {
@@ -251,7 +247,7 @@ class ArrayGrid {
         for (let i = 0; i < this.xLength; i++) {
             for (let j = 0; j < this.yLength; j++) {
                 let sublist = this.tiles[i][j].points;
-                while (!sublist.isEmpty()) {
+                while (sublist != undefined && !sublist.isEmpty()) {
                     let p = sublist.item;
                     p.move(time); //this should also call this.moveOnGrid()
                     sublist = sublist.next;
@@ -266,18 +262,21 @@ class ArrayGrid {
                 let sublist = this.tiles[i][j].points;
                 while (!sublist.isEmpty()) {
                     let p = sublist.item;
-                    this.applyPhisicsPoint(time, p);
+                    this.applyPhisicsPoint(time, p, i, j);
+                    p.cursorColl();
                     sublist = sublist.next;
                 }
             }
         }
     }
 
-    applyPhisicsPoint(time, point) {
+    applyPhisicsPoint(time, point, gx, gy) {
         for (let i = -1; i <= 1; i++) {
             for (let j = -1; j <= 1; j++) {
-                if (i >= 0 && j >= 0 && i < this.xLength && j < this.yLength) {
-                    this.collideWithPoints(time, point, this.tiles[i][j]);
+                let gx1 = i + gx;
+                let gy1 = j + gy;
+                if (gx1 >= 0 && gy1 >= 0 && gx1 < this.xLength && gy1 < this.yLength) {
+                    this.applyPhisicsFromTile(time, point, this.tiles[gx1][gy1]);
                 }
             }
         }
@@ -313,7 +312,7 @@ class ArrayGrid {
         let gy1 = this.toGridCoord(y1);
         let gx2 = this.toGridCoord(x2);
         let gy2 = this.toGridCoord(y2);
-        if (gx1 != gx2 && gy1 != gy2) {
+        if (gx1 != gx2 || gy1 != gy2) {
             this.removePointgc(p, gx1, gy1);
             this.addPointgc(p, gx2, gy2);
             return true;
@@ -327,8 +326,6 @@ class ArrayGrid {
     Postcondition: a new point is added to grid[gx][gy]
     */
     addPointgc(p, gx, gy) {
-        console.log("gx: " + gx + " gy: " + gy);
-        console.log(this.tiles[gx][gy]);
         this.tiles[gx][gy].addPoint(p);
     }
 
@@ -591,14 +588,14 @@ class Point {
 
 
 
-
+let running = true;
 let canvasWidth = canvas.width;
 let canvasHeight = canvas.height;
 canvas.width = this.window.innerWidth;
 canvas.height = this.window.innerHeight;
 canvasWidth = canvas.width;
 canvasHeight = canvas.height;
-// updateWindowSize(null);
+// updateWindowSize(undefined);
 // const pointMap = new Map();
 console.log("canvas.width: " + canvas.width + " canvas.height " + canvas.height);
 const pointGrid = new ArrayGrid(Math.max(canvas.width, canvas.height) / 20);
@@ -615,11 +612,30 @@ let cursorRingDistance = maxCursorInteractionDistance / 4;
 const ctx = canvas.getContext("2d");
 // updateWindowSize();
 
+function test() {
+    let list = new LinkedList(undefined, undefined);
+    let p = new Point(1,1,0,0,10);
+    let p2 = new Point(2,2,0,0,10);
+    list.append(p2)
+    list.append(p);
+    console.log("remove sucessful: " + list.removeItem(p));
+    console.log(list);
+    console.log(list.isEmpty());
+    console.log("length: " + list.length() + " item: " + list.item);
+    // list.append(p);
+    // list.append(p);
+    // console.log("length: " + list.length() + " item: " + list.item);
+    // list.removeItem(p);
+    // console.log("length: " + list.length() + " item: " + list.item);
+
+
+}
+//test();
 
 function main() {
     
     console.log("canvasWidth: " + canvasWidth + " canvasHeight: " + canvasHeight);
-    pointGrid.init(pointCount, 2);
+    pointGrid.init(10, 2);
     //testInit();
     for (let i = 0; i < 1; i++) {
         step();
@@ -629,15 +645,24 @@ function main() {
 }
 main();
 
+
+
 function run() {
     step();
-    requestAnimationFrame(run);
+    if(running) {
+        requestAnimationFrame(run);
+    }
+}
+
+function stop() {
+    running = false;
 }
 
 function step() {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     pointGrid.drawAll(ctx);
     pointGrid.moveAll(timeStep);
+    pointGrid.applyPhisicsAll(timeStep);
     // updateAll(timeStep);
     // drawLines(lines);
     //console.log(lines);
