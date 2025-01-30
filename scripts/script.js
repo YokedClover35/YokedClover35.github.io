@@ -89,6 +89,15 @@ class LinkedList{
             this.next.append(item);
         }
     }
+    removeItem(item) {
+        if(this.isEmpty()) {
+            return false;
+        } else if(this.item == item) {
+            this.remove();
+            return true;
+        }
+        return this.next.removeItem();
+    }
     remove() {
         this.item = this.next().item();
         this.next = this.next().next;
@@ -283,6 +292,7 @@ let canvasWidth;
 let canvasHeight;
 let gridSize;
 const pointMap = new Map();
+const pointGrid = [[]];
 const pointCount = 100;
 const timeStep = .5;
 const points = [];
@@ -564,7 +574,58 @@ function getMapCountAt(map, gridX, gridY) {
 }
 
 
+/*
+numPointsOnGridAt returns the number of points at the given location
+Precondition: gx, gy >= 0; gx <= grid.length; gy <= grid[0].length
+Postcondition: nothing is changed
+*/
+function numPointsOnGridAt(grid, gx, gy) {
+    return grid[gx][gy].length();
+}
 
+/*
+moveOnGrid moves the given point p from one grid to another
+Precondition: x1, y1, x2, y2 >= 0; x1, x2 <= canvas.width; y1, y2 <= canvas.height
+Postcondition: point if moved from grid[gx1][gy1] to grid[gx2][gy2]
+*/
+function moveOnGrid(grid, p, x1, y1, x2, y2) {
+    let gx1 = toGridCoord(x1);
+    let gy1 = toGridCoord(y1); 
+    let gx2 = toGridCoord(x2); 
+    let gy2 = toGridCoord(y2);
+    if (gx1 != gx2 && gy1 != gy2) {
+        removePointFromGrid(grid, p, gx1, gy1);
+        addPointToGrid(grid, p, gx2, gy2);
+        return true;
+    }
+    return false;
+}
+
+/*
+addPointToGrid adds the given point to the given grid cordinates
+Precondition: gx, gy >= 0; gx <= grid.length; gy <= grid[0].length
+Postcondition: a new point is added to grid[gx][gy]
+*/
+function addPointToGrid(grid, p, gx, gy) {
+    grid[gx][gy].append(p);
+}
+
+/*
+removePointFromGrid removes the given point from the given grid cordinates
+Precondition: gx, gy >= 0; gx <= grid.length; gy <= grid[0].length; grid[gx][gy] contains point p
+Postcondition: point p is removed from grid[gx][gy]
+*/
+function removePointFromGrid(grid, p, gx, gy) {
+    grid[gx][gy].remove(p);
+}
+
+/*
+toGridCord returns the correct index if the grid's position on the canvas
+Precondition: n >= 0; n <= canvas's dimention
+*/
+function toGridCoord(n) {
+    return Math.floor(n / tileSize);
+}
 
 
 // vestigial functions
