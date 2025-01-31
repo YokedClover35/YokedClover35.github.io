@@ -177,11 +177,26 @@ class Tile {
     }
 }
 
+//Line class
+class Line{
+    constructor(x1, y1, x2, y2) {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+
+    }
+    draw(width) {
+        DrawHelper.drawLine(this.x1, this.y1, this.x2, this.y2, width, 'round', [255, 255, 255])
+    }
+}
+
 
 //Grid class
 class ArrayGrid {
     constructor(tileSize) {
         this.tiles = [[]];
+        this.lines = [];
         this.xLength;
         this.yLength;
         this.tileSize = tileSize;
@@ -354,11 +369,53 @@ class ArrayGrid {
         for (let i = 0; i < this.xLength; i++) {
             for (let j = 0; j < this.yLength; j++) {
                 this.tiles[i][j].drawPoints(ctx);
+                this.saveLinesForTile(this.tiles[i][j], i, j);
             }
         }
         if (debug) {
             this.drawDebug(ctx);
         }
+    }
+
+    saveLinesForTile(tile, gx, gy) {
+        let tilesToCheck = [
+            1,0,
+            -1,-1,
+            0,-1,
+            1,-1
+        ]
+        //do self tile connections
+        for(let subArray1 = tile.points; !subArray1.isEmpty(); subArray1 = subArray1.next) {
+            for(let subArray2 = subArray1.next; !subArray2.isEmpty(); subArray2 = subArray2.next) {
+                this.saveLine(subArray1.item, subArray2.item);
+            }
+        }
+        //do other tiles
+        for(let i = 0; i < tilesToCheck.length; i+= 2) {
+            let cx = tilesToCheck[i] + gx;
+            let cy = tilesToCheck[i + 1] + gy;
+            if(cx >= 0 && cx < this.xLength && cy >= 0 && cy < this.yLength) {
+                let tile1 = this.tiles[cx][cy];
+                for(let subArray1 = tile.points; !subArray1.isEmpty(); subArray1 = subArray1.next) {
+                    for(let subArray2 = tile1.points; !subArray2.isEmpty(); subArray2 = subArray2.next) {
+                        this.saveLine(subArray1.item, subArray2.item);
+                    }
+                }
+            }
+        }
+    }
+
+    saveLine(p1, p2) {
+        if(p1.distToPoint(p2) <= this.tileSize) {
+            this.lines.push(new Line(p1.x, p1.y, p2.x, p2.y));
+        }
+    }
+
+    drawLines(ctx) {
+        for(let i = 0; i < this.lines.length; i++) {
+            this.lines[i].draw(1);
+        }
+        this.lines = [];
     }
 
     drawDebug(ctx) {
@@ -392,7 +449,8 @@ class DrawHelper {
         ctx.fill();
     }
 
-    static drawLine(x1, y1, x2, y2, lineWidth, lineCap) {
+    static drawLine(x1, y1, x2, y2, lineWidth, lineCap, color) {
+        ctx.strokeStyle = this.colorToString(color);
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineWidth = lineWidth;
@@ -444,7 +502,7 @@ class DrawHelper {
     static drawLines(lines) {
         ctx.globalAlpha = 0.25;
         for (let i = 0; i < lines.length; i += 4) {
-            this.drawLine(lines[i], lines[i + 1], lines[i + 2], lines[i + 3], 2, 'round');
+            this.drawLine(lines[i], lines[i + 1], lines[i + 2], lines[i + 3], 2, 'round', [255, 255, 255, 1]);
         }
         ctx.globalAlpha = 1.0;
     }
@@ -501,7 +559,7 @@ class Point {
         }
     }
     calcForceFromPoint(distance) {
-        return -1 * Math.cos(Math.PI * distance / (2 * .8 * pointGrid.tileSize));
+        return -10 * Math.cos(Math.PI * distance / (2 * .8 * pointGrid.tileSize));
         //return -0.1 * (1 - distance / pointGrid.tileSize);
     }
     cursorColl() {
@@ -594,8 +652,8 @@ canvasHeight = canvas.height;
 // updateWindowSize(undefined);
 // const pointMap = new Map();
 console.log("canvas.width: " + canvas.width + " canvas.height " + canvas.height);
-const pointGrid = new ArrayGrid(Math.max(canvas.width, canvas.height) / 20);
-const pointCount = 500;
+const pointGrid = new ArrayGrid(Math.max(canvas.width, canvas.height) / 10);
+const pointCount = 50;
 const pointCutoff = 3;
 const timeStep = .5;
 let totalFramerate = new Array(50).fill(0);
@@ -605,7 +663,8 @@ let index = 0;
 // const points = [];
 // let lines = [];
 const debug = false;
-const pointRadius = 10;
+const showFps = false;
+const pointRadius = 3;
 let maxCursorInteractionDistance = 1000;
 let cursorRingDistance = maxCursorInteractionDistance / 4;
 
@@ -656,8 +715,10 @@ function run() {
     }
     let dt = Date.now() - prevTime;
     prevTime = Date.now()
+    if(showFps) {
     drawFrameTime("Total", 0, dt, totalFramerate);
     index ++;
+    }
 }
 
 function stop() {
@@ -666,12 +727,16 @@ function stop() {
 
 function step() {
     let start = Date.now();
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    pointGrid.drawAll(ctx);
-    pointGrid.moveAll(timeStep);
+    ctx.fillStyle = `rgba(0, 0, 0, 0.05)`;
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     pointGrid.applyPhisicsAll(timeStep);
+    pointGrid.moveAll(timeStep);
+    pointGrid.drawAll(ctx);
+    pointGrid.drawLines(ctx)
     let dt = Date.now() - start;
+    if(showFps) {
     drawFrameTime("Step", 60, dt, stepFrametime);    
+    }
     // updateAll(timeStep);
     // drawLines(lines);
     //console.log(lines);
