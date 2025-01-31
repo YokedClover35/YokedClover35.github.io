@@ -543,12 +543,6 @@ class Point {
         this.velX += fX;
         this.velY += fY;
     }
-    saveLineTo(p) {
-        lines.push(this.x);
-        lines.push(this.y);
-        lines.push(p.x);
-        lines.push(p.y);
-    }
     collideWithPoint(time, point, multiplier) {
         let distTo = this.distToPoint(point);
         if (distTo < pointGrid.tileSize) {
@@ -622,7 +616,7 @@ class Point {
             this.y += dY;
         }
         pointGrid.moveOnGrid(this, prevX, prevY, this.x, this.y);
-        this.reduceVel(time, 0.0025, 1);
+        this.reduceVel(time, 0.01, 0);
     }
     reduceVel(time, factor, maxVel) {
         let abVelX = Math.abs(this.velX);
@@ -727,8 +721,9 @@ function stop() {
 
 function step() {
     let start = Date.now();
-    ctx.fillStyle = `rgba(0, 0, 0, 0.05)`;
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    // ctx.fillStyle = `rgba(0, 0, 0, 0.05)`;
+    // ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     pointGrid.applyPhisicsAll(timeStep);
     pointGrid.moveAll(timeStep);
     pointGrid.drawAll(ctx);
