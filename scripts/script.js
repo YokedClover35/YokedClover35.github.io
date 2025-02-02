@@ -171,7 +171,7 @@ class Tile {
         while (!sublist.isEmpty()) {
             let p = sublist.item;
             let vel = Math.sqrt(p.velX * p.velX + p.velY * p.velY);
-            DrawHelper.drawCircle(p.x, p.y, p.radius, [(vel) * 10, (vel) * 10, 255]);
+            DrawHelper.drawCircle(p.x, p.y, p.radius, [255, (vel) * 10, (vel) * 10]);
             sublist = sublist.next;
         }
     }
@@ -187,7 +187,7 @@ class Line{
 
     }
     draw(width) {
-        DrawHelper.drawLine(this.x1, this.y1, this.x2, this.y2, width, 'round', [255, 255, 255])
+        DrawHelper.drawLine(this.x1, this.y1, this.x2, this.y2, width, 'round', [0, 0, 0])
     }
 }
 
@@ -553,7 +553,7 @@ class Point {
         }
     }
     calcForceFromPoint(distance) {
-        return -10 * Math.cos(Math.PI * distance / (2 * .8 * pointGrid.tileSize));
+        return -5 * Math.cos(Math.PI * distance / (2 * .8 * pointGrid.tileSize));
         //return -0.1 * (1 - distance / pointGrid.tileSize);
     }
     cursorColl() {
@@ -658,7 +658,7 @@ let index = 0;
 // let lines = [];
 const debug = false;
 const showFps = false;
-const pointRadius = 3;
+const pointRadius = 5;
 let maxCursorInteractionDistance = 1000;
 let cursorRingDistance = maxCursorInteractionDistance / 4;
 
