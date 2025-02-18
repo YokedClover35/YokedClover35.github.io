@@ -192,24 +192,85 @@ class Line {
 //Grid class
 class ArrayGrid {
     constructor(tileSize) {
-        this.tiles = [[]];
+        this.tiles = [];
         this.lines = [];
         this.xLength = 0;
         this.yLength = 0;
         this.tileSize = tileSize;
     }
     resize(width, height) {
+        let oldXLength = this.xLength;
+        let oldYLength = this.yLength;
         this.xLength = Math.floor(width / this.tileSize) + (width % this.tileSize == 0 ? 0 : 1) + 1;
         this.yLength = Math.floor(height / this.tileSize) + (height % this.tileSize == 0 ? 0 : 1) + 1;
-        for (let i = 0; i < this.xLength; i++) {
-            if (this.tiles[i] == null) {
-                this.tiles.push([]);
-            }
-            for (let j = 0; j < this.yLength; j++) {
-                if (this.tiles[i][j] == null) {
-                    this.tiles[i].push(new Tile());
+        //add new tiles if needed
+        /**
+         * OOOXX
+         * OOOXX
+         * YYYXX
+         * YYYXX
+         * O = old
+         * X = new x tiles
+         * Y = new y tiles
+         */
+        //X - add new x tiles in old y columns/rows
+        if (this.xLength > oldXLength) {
+            for (let x = oldXLength; x < this.xLength; x++) {
+                //create new column
+                if (this.tiles[x] == null) {
+                    this.tiles.push(new Array(this.yLength));
+                    for (let y = 0; y < this.yLength; y++) {
+                        this.tiles[x][y] = new Tile();
+                    }
                 }
             }
+        }
+        else if (this.xLength !== oldXLength) {
+            //remove tiles out of screen and relocate points out of screen
+            while (this.tiles.length > this.xLength) {
+                let removedTiles = this.tiles.pop();
+                if (removedTiles !== undefined) {
+                    for (let y = 0; y < removedTiles.length; y++) {
+                        this.relocatePoints(removedTiles[y]);
+                    }
+                }
+                else {
+                    console.log("something went wrong when removing tiles along the x axis!");
+                }
+            }
+        }
+        if (this.yLength > oldYLength) {
+            //Y - add new y tiles in old x columns/rows
+            for (let x = 0; x < oldXLength; x++)
+                for (let y = oldYLength; y < this.yLength; y++) {
+                    if (this.tiles[x][y] == null) {
+                        this.tiles[x].push(new Tile());
+                    }
+                }
+        }
+        else if (this.yLength !== oldYLength) {
+            for (let x = 0; x < this.xLength; x++) {
+                while (this.tiles[x].length > this.yLength) {
+                    let tile = this.tiles[x].pop();
+                    if (tile !== undefined) {
+                        this.relocatePoints(tile);
+                    }
+                    else {
+                        console.log("something went wrong when removing tiles along the y axis!");
+                    }
+                }
+            }
+        }
+    }
+    relocatePoints(tile) {
+        // console.log("Relocating points!");
+        let sublist = tile.points;
+        while (sublist !== null && !sublist.isEmpty()) {
+            let p = sublist.item;
+            p.x = Math.min(p.x, canvasWidth - p.radius);
+            p.y = Math.min(p.y, canvasHeight - p.radius);
+            this.addPointac(p);
+            sublist = sublist.next;
         }
     }
     init(pointCount, maxVel) {
@@ -222,8 +283,9 @@ class ArrayGrid {
         for (let i = 0; i < pointCount; i++) {
             let point = new Point(Math.floor(Math.random() * canvasWidth), Math.floor(Math.random() * canvasHeight), (Math.random() * maxVel * 2) - maxVel, (Math.random() * maxVel * 2) - maxVel, pointRadius);
             this.addPointac(point);
-            console.log("Initalization Done!");
         }
+        console.log("Initalization Done!");
+        console.log(this.tiles);
     }
     optimizeTiles() {
         for (let i = 0; i < this.xLength; i++) {
@@ -250,13 +312,24 @@ class ArrayGrid {
             }
         }
     }
-    applyPhisicsAll(time) {
+    applyPointPhysics(time) {
         for (let i = 0; i < this.xLength; i++) {
             for (let j = 0; j < this.yLength; j++) {
                 let sublist = this.tiles[i][j].points;
                 while (sublist !== null && !sublist.isEmpty()) {
                     let p = sublist.item;
                     this.applyPhisicsPoint(time, p, i, j);
+                    sublist = sublist.next;
+                }
+            }
+        }
+    }
+    applyCursorPhysics(time) {
+        for (let i = 0; i < this.xLength; i++) {
+            for (let j = 0; j < this.yLength; j++) {
+                let sublist = this.tiles[i][j].points;
+                while (sublist !== null && !sublist.isEmpty()) {
+                    let p = sublist.item;
                     p.cursorColl();
                     sublist = sublist.next;
                 }
@@ -320,7 +393,12 @@ class ArrayGrid {
     Postcondition: a new point is added to grid[gx][gy]
     */
     addPointgc(p, gx, gy) {
-        this.tiles[gx][gy].addPoint(p);
+        if (this.tiles[gx][gy] != null) {
+            this.tiles[gx][gy].addPoint(p);
+        }
+        else {
+            console.log("could not add point at x: " + gx + " y: " + gy + "!");
+        }
     }
     addPointac(p) {
         this.addPointgc(p, this.toGridCoord(p.x), this.toGridCoord(p.y));
@@ -556,6 +634,7 @@ class Point {
         //return Math.max(-(distance / maxDistance) + 0.25, 0); 
         // return Math.atan(-2 * Math.PI - distance) + Math.PI / 2;
         return (distance >= maxDistance) ? 0 : (1 - distance / maxDistance) * 0.5 * cursorForceMultiplier;
+        // return Math.min(maxDistance * 100 / (distance * distance), 1000);
     }
     move(time) {
         let prevX = this.x;
@@ -666,16 +745,18 @@ canvasHeight = canvas.height;
 // const pointMap = new Map();
 console.log("canvas.width: " + canvas.width + " canvas.height " + canvas.height);
 const pointGrid = new ArrayGrid(Math.max(canvas.width, canvas.height) / 50);
-const pointCount = 200;
+const pointCount = 100;
 const maxNodeLines = 1;
 const pointCutoff = 1;
 const timeStep = .05;
-const bounceFactor = .75;
-const maxVel = 0;
-const friction = 0.01;
+const bounceFactor = 0.5;
+const maxVel = 0.5;
+const friction = 0.05;
 const physicsStepsPerFrame = 2;
+const displayPoints = true;
 const displayLines = true;
-const pointForceMultiplier = 5;
+const pointToPointCollisions = true;
+const pointForceMultiplier = 1;
 const cursorCarryForceMultiplier = 1 / physicsStepsPerFrame;
 const cursorForceMultiplier = 1 / physicsStepsPerFrame;
 let totalFramerate = new Int32Array(50);
@@ -685,7 +766,7 @@ let index = 0;
 // const points = [];
 // let lines = [];
 const debug = false;
-const showFps = false;
+const showFps = true;
 const pointRadius = 5;
 let maxCursorInteractionDistance = 1000;
 let cursorRingDistance = maxCursorInteractionDistance / 4;
@@ -729,7 +810,9 @@ function run() {
     if (displayLines) {
         pointGrid.drawLines(ctx, Infinity);
     }
-    pointGrid.drawPoints(ctx);
+    if (displayPoints) {
+        pointGrid.drawPoints(ctx);
+    }
     if (debug) {
         pointGrid.drawDebug(ctx);
     }
@@ -747,7 +830,10 @@ function stop() {
 function step(timeStep) {
     let start = Date.now();
     //pointGrid.optimizeTiles(); // does not work
-    pointGrid.applyPhisicsAll(timeStep);
+    if (pointToPointCollisions) {
+        pointGrid.applyPointPhysics(timeStep);
+    }
+    pointGrid.applyCursorPhysics(timeStep);
     pointGrid.moveAll(timeStep);
     let dt = Date.now() - start;
     if (showFps) {
