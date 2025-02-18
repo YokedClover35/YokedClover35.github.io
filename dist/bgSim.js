@@ -619,11 +619,13 @@ class Point {
             let angle = this.angleToXY(ct.x, ct.y);
             this.accVA(force, angle);
         }
-        else if (Math.abs(ct.getdx()) >= 0.5 || Math.abs(ct.getdy()) >= 0.5) {
+        else {
             let distTo = this.distToXY(ct.x, ct.y);
             let force = this.calcCursorCarryForce(distTo, 100);
             // this.accXY((this.velX - ct.getdx()) * force, (this.velY - ct.getdy()) * force);
-            this.accXY((ct.getdx() - this.velX) * force, (ct.getdy() - this.velY) * force);
+            // this.accXY((Math.sign(ct.getdx()) === Math.sign(this.velX) && Math.abs(ct.getdx() * force) > Math.abs(this.velX)) ? 0 : (ct.getdx() - this.velX) * force,
+            //            (Math.sign(ct.getdy()) === Math.sign(this.velY) && Math.abs(ct.getdy() * force) > Math.abs(this.velY)) ? 0 : (ct.getdy() - this.velY) * force);
+            this.applyFriction(timeStep, force, 10 + maxVel - (ct.getdx() * ct.getdx() + ct.getdy() * ct.getdy()), ct.getdx(), ct.getdy());
         }
     }
     calcCursorCarryForce(distance, maxDistance) {
@@ -639,6 +641,7 @@ class Point {
     move(time) {
         let prevX = this.x;
         let prevY = this.y;
+        //handle wall collisions x
         let dX = this.velX * time;
         if (this.x + dX > canvasWidth - this.radius) {
             this.x += canvasWidth - this.radius - this.x - dX;
@@ -651,6 +654,7 @@ class Point {
         else {
             this.x += dX;
         }
+        //handle wall colisions y
         let dY = this.velY * time;
         if (this.y + dY > canvasHeight - this.radius) {
             this.y += canvasHeight - this.radius - this.y - dY;
@@ -663,17 +667,17 @@ class Point {
         else {
             this.y += dY;
         }
+        //update position on grid
         pointGrid.moveOnGrid(this, prevX, prevY, this.x, this.y);
-        this.reduceVel(time, friction, maxVel);
+        //apply friction
+        this.applyFriction(time, friction, maxVel, 0, 0);
     }
-    reduceVel(time, factor, maxVel) {
-        let abVelX = Math.abs(this.velX);
-        let abVelY = Math.abs(this.velY);
-        if (abVelX > maxVel) {
-            this.velX = (this.velX < 0) ? -(maxVel + this.reduceLinear(factor * time, abVelX - maxVel)) : (maxVel + this.reduceLinear(factor * time, abVelX - maxVel));
+    applyFriction(time, factor, maxVel, relX, relY) {
+        if (Math.abs(this.velX) > maxVel) {
+            this.velX += -(factor * time) * (this.velX - relX);
         }
-        if (abVelY > maxVel) {
-            this.velY = (this.velY < 0) ? -(maxVel + this.reduceLinear(factor * time, abVelY - maxVel)) : (maxVel + this.reduceLinear(factor * time, abVelY - maxVel));
+        if (Math.abs(this.velX) > maxVel) {
+            this.velY += -(factor * time) * (this.velY - relY);
         }
     }
     reduceLinear(factor, val) {
@@ -750,14 +754,14 @@ const maxNodeLines = 1;
 const pointCutoff = 1;
 const timeStep = .05;
 const bounceFactor = 0.5;
-const maxVel = 0.5;
+const maxVel = 0;
 const friction = 0.05;
-const physicsStepsPerFrame = 2;
+const physicsStepsPerFrame = 1;
 const displayPoints = true;
 const displayLines = true;
 const pointToPointCollisions = true;
-const pointForceMultiplier = 1;
-const cursorCarryForceMultiplier = 1 / physicsStepsPerFrame;
+const pointForceMultiplier = 5;
+const cursorCarryForceMultiplier = 5 / physicsStepsPerFrame;
 const cursorForceMultiplier = 1 / physicsStepsPerFrame;
 let totalFramerate = new Int32Array(50);
 let stepFramerate = new Int32Array(50);
@@ -854,36 +858,4 @@ function avgArray(A) {
         sum += A[i];
     }
     return sum / A.length;
-}
-//line helper functions
-function containsRepeatingLines(lines) {
-    let testMap = new Set();
-    let i = 0;
-    let found = false;
-    while (i < lines.length && !found) {
-        let x1 = lines[i];
-        let y1 = lines[i + 1];
-        let x2 = lines[i + 2];
-        let y2 = lines[i + 3];
-        if (x2 > x1) {
-            let tx = x1;
-            let ty = y1;
-            x1 = x2;
-            y1 = y2;
-            x2 = tx;
-            y2 = ty;
-        }
-        let hash = xyxyHash(Math.floor(x1), Math.floor(y1), Math.floor(x2), Math.floor(y2));
-        if (testMap.has(hash)) {
-            found = true;
-        }
-        else {
-            testMap.add(hash);
-        }
-        i += 4;
-    }
-    console.log((!found) ? "No repeating lines!" : "Repeating Lines Found!");
-}
-function xyxyHash(x1, y1, x2, y2) {
-    return (x1 << 24) + (y1 << 16) + (x2 << 8) + y2;
 }

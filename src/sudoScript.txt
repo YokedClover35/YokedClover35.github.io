@@ -3,6 +3,7 @@ X-create a hashmap using a single integer storing both x,y as the key and the it
 X-handle proximity detection using a small -hash- array grid for particle to particle collision
 X-handle proximity detection to mouse using a simple 0(N) algorithm
 X-create lines between close enough points (must be smaller than the grid?)
+-make expanding grid selection radius
 -create triangles using the lines and decide color based on the center of the triangle
 -allow for users to create simulation setting configs and maybe store them as cookies?
 -side bar settings menu
