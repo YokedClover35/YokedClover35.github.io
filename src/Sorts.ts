@@ -1,3 +1,64 @@
+interface Action {
+    type: string;
+    getDescription: () => string;
+}
+
+class Swap implements Action {
+    type = "Swap";
+    i: number;
+    j: number;
+    x: number;
+    y: number;
+    constructor(i: number, j: number, x: number, y: number) {
+        this.i = i;
+        this.j = j;
+        this.x = x;
+        this.y = y;
+
+    }
+    getDescription(): string {
+        return `Index ${this.i} with value ${this.x} and index ${this.j} with value ${this.y} are swapped.`;
+    }
+}
+
+class Comparison implements Action {
+    type = "Comparison";
+    i: number;
+    j: number;
+    x: number;
+    y: number;
+    relation: number;
+    constructor(i: number, j: number, x: number, y: number) {
+        this.i = i;
+        this.j = j;
+        this.x = x;
+        this.y = y;
+        if (this.x > this.y) {
+            this.relation = 1;
+        } else if (this.x === this.y) {
+            this.relation = 0;
+        } else {
+            this.relation = -1;
+        }
+    }
+    relationToString(): string {
+        switch (this.relation) {
+            case 1:
+                return `greater than`;
+            case 0:
+                return `equal to`;
+            case -1:
+                return `less than`;
+            default:
+                return `error`;
+        }
+    }
+    getDescription(): string {
+        return `Index ${this.i} with value ${this.x} is ${this.relationToString()} index ${this.j} with value ${this.y}.`;
+    }
+}
+
+
 
 class Sorts {
 
