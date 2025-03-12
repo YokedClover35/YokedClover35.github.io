@@ -42,10 +42,10 @@ function setMousePosVel(e) {
     ct.addVelocityEntries(cursorDX, cursorDY);
     //console.log("x: " + cursorX + " y: " + cursorY + "\nvelX: " + cursorDX + " velY: " + cursorDY);
 }
-canvas.addEventListener("mousemove", setMousePosVel);
-canvas.addEventListener("mouseenter", setMousePosVel);
-canvas.addEventListener("mouseleave", setMousePosVel);
-canvas.addEventListener("mousedown", function (e) {
+window.addEventListener("mousemove", setMousePosVel);
+window.addEventListener("mouseenter", setMousePosVel);
+window.addEventListener("mouseleave", setMousePosVel);
+window.addEventListener("mousedown", function (e) {
     switch (e.button) {
         case 0:
             button1 = true;
@@ -59,7 +59,7 @@ canvas.addEventListener("mousedown", function (e) {
             break;
     }
 });
-canvas.addEventListener("mouseup", function (e) {
+window.addEventListener("mouseup", function (e) {
     switch (e.button) {
         case 0:
             button1 = false;
@@ -762,8 +762,8 @@ canvas.height = canvas.clientHeight;
 // updateWindowSize(null);
 // const pointMap = new Map();
 console.log("canvas.width: " + canvas.width + " canvas.height " + canvas.height);
-const pointGrid = new ArrayGrid(Math.max(canvas.width, canvas.height) / 50);
-const pointCount = 1000;
+const pointGrid = new ArrayGrid(Math.max(canvas.width, canvas.height) / 30);
+const pointCount = 100;
 const maxNodeLines = 1;
 const pointCutoff = 1;
 const timeStep = .05;
@@ -772,11 +772,11 @@ const maxVel = 0;
 const friction = 0.05;
 const physicsStepsPerFrame = 1;
 const displayPoints = true;
-const displayLines = false;
+const displayLines = true;
 const pointToPointCollisions = true;
 const pointForceMultiplier = 5;
 const cursorCarryForceMultiplier = 5 / physicsStepsPerFrame;
-const cursorForceMultiplier = 1 / physicsStepsPerFrame;
+const cursorForceMultiplier = 3 / physicsStepsPerFrame;
 let totalFramerate = new Int32Array(50);
 let stepFramerate = new Int32Array(50);
 let stepFrametime = new Int32Array(50);

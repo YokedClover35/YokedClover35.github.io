@@ -20,6 +20,7 @@ nav {
     display: grid;
     position: fixed;
     top: 0px;
+    height: 5em;
     width: 100%;
     grid-template-columns: 2fr 14fr auto;
     grid-template-rows: auto;
@@ -29,18 +30,12 @@ nav {
     padding: 0;
 }
 
-#main-wrapper {
-    display: grid;
-    grid-template-columns: auto 0;
-    animation: 0.5s;
-    margin-top: 4.80em;
-}
-
 #nav-bar {
     display: flex;
     justify-content: right;
     list-style: none;
     font-size: 1.5em;
+    padding-right: 1em;
 }
 
 #nav-logo {
@@ -54,36 +49,55 @@ nav {
 .nav-link {
     text-decoration: none;
     color: #fff;
-    padding: 0.25em;
+    padding: 0.25em 0.5em;
     
 }
+
+#main-wrapper {
+    margin-top: 5em;
+}
+
+.overlay {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    margin: 10vh 20vw;
+    width: 60vw;
+    min-width: none;
+    top: 5em;
+    gap: 2.5em;
+}
+
+
+
+.box {
+    background-color: lightgrey;
+    border-radius: 1em;
+    padding: 1em;
+}
+
 #canvas1{
     margin: 0;
     width: 100%;
     height: 200vh;
-    /* aspect-ratio: 1; */
     background-color: white;
 }
 
 #side-menu-wrapper {
     right: 0;
-    /* height: 100%; */
+    top: 5em;
     position: fixed;
-    /* display: flex;
-    justify-content: right; */
 }
 
 #side-menu-button {
+    height: fit-content;
     float: left;
-    /* position: fixed;
-    right: 0; */
     font-size: 2em;
     font-weight: bolder;
     text-decoration: none;
     color: black;
     padding: .5em;
     background-color: blue;
-    overflow-x: hidden;
     border-top-left-radius: .5em;
     border-bottom-left-radius: .5em;
 }
@@ -96,6 +110,10 @@ nav {
     transition: 0.3s;
 }
 
+#side-menu * {
+    margin: 1em;
+}
+
 #side-menu form {
     display: flex;
     flex-direction: column;
@@ -105,14 +123,6 @@ nav {
 #side-menu.show {
     max-width: 30vw;
 }
-
-
-
-main {
-    grid-area: main;
-}
-
-
 
 body {
     margin: 0;
