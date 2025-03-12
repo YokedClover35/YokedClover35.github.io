@@ -66,34 +66,40 @@ nav {
 }
 
 #side-menu-wrapper {
-    width: 100%;
-    height: 100%;
+    right: 0;
+    /* height: 100%; */
     position: fixed;
-    display: flex;
-    justify-content: right;
+    /* display: flex;
+    justify-content: right; */
 }
 
 #side-menu-button {
-    display: flex;
-    justify-content: right;
+    float: left;
+    /* position: fixed;
+    right: 0; */
     font-size: 2em;
     font-weight: bolder;
     text-decoration: none;
     color: black;
     padding: .5em;
-    padding-right: .25em;
     background-color: blue;
     overflow-x: hidden;
+    border-top-left-radius: .5em;
+    border-bottom-left-radius: .5em;
 }
 
 #side-menu {
+    height: 100vh;
     max-width: 0;
     overflow-x: hidden;
+    background-color: red;
+    transition: 0.3s;
+}
+
+#side-menu form {
     display: flex;
     flex-direction: column;
-    background-color: red;
     display:inline-block;
-    transition: 0.2s;
 }
 
 #side-menu.show {

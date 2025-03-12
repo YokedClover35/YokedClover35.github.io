@@ -73,11 +73,11 @@ canvas.addEventListener("mouseup", function (e) {
             break;
     }
 });
-canvas.addEventListener("wheel", function (e) {
-    e.preventDefault();
-    maxCursorInteractionDistance -= e.deltaY;
-    console.log(maxCursorInteractionDistance);
-});
+// canvas.addEventListener("wheel", function (e) {
+//     e.preventDefault();
+//     maxCursorInteractionDistance -= e.deltaY;
+//     console.log(maxCursorInteractionDistance);
+// });
 //LinkedList class
 class LinkedList {
     constructor(item = null, next = null) {

@@ -86,11 +86,11 @@ canvas.addEventListener("mouseup", function (e) {
     }
 });
 
-canvas.addEventListener("wheel", function (e) {
-    e.preventDefault();
-    maxCursorInteractionDistance -= e.deltaY;
-    console.log(maxCursorInteractionDistance);
-});
+// canvas.addEventListener("wheel", function (e) {
+//     e.preventDefault();
+//     maxCursorInteractionDistance -= e.deltaY;
+//     console.log(maxCursorInteractionDistance);
+// });
 
 
 
@@ -927,7 +927,6 @@ function run() {
     let dt = Date.now() - prevTime;
     prevTime = Date.now();
     updateWindowSize(canvas);
-
     //fade previous frame
     // ctx.fillStyle = `rgba(0, 0, 0, 0.01)`;
     // ctx.fillRect(0, 0, canvas.width, canvas.height);
