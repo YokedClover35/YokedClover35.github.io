@@ -1,10 +1,11 @@
 interface Action {
     type: string;
     getDescription: () => string;
+    apply: (A: Int32Array) => void;
 }
 
 class Swap implements Action {
-    type = "Swap";
+    type = "swap";
     i: number;
     j: number;
     x: number;
@@ -16,13 +17,16 @@ class Swap implements Action {
         this.y = y;
 
     }
+    apply(A: Int32Array) {
+        Sorts.swap(A, this.i, this.j);
+    }
     getDescription(): string {
         return `Index ${this.i} with value ${this.x} and index ${this.j} with value ${this.y} are swapped.`;
     }
 }
 
 class Comparison implements Action {
-    type = "Comparison";
+    type = "comparison";
     i: number;
     j: number;
     x: number;
@@ -53,6 +57,8 @@ class Comparison implements Action {
                 return `error`;
         }
     }
+    apply(A: Int32Array) {
+    }
     getDescription(): string {
         return `Index ${this.i} with value ${this.x} is ${this.relationToString()} index ${this.j} with value ${this.y}.`;
     }
@@ -63,34 +69,99 @@ class Comparison implements Action {
 class Sorts {
 
     // maintains a count of comparisons performed by this Sorts object
-    comparisonCount: number;
+    comparisonCount: number = 0;
+    swapCount: number = 0;
     history: Action[] = [];
+    unsorted: Int32Array = new Int32Array(0);
+    sorted: Int32Array = new Int32Array(0);
+    currentState: Int32Array = new Int32Array(0);
+    historyIndex: number = 0;
+
     constructor() {
-        this.comparisonCount = 0;
     }
+
+    loadNewArray(A: Int32Array) {
+        this.comparisonCount = 0;
+        this.swapCount = 0;
+        this.history = [];
+        // make unsorted and currentState a deep copy of A
+        this.unsorted = this.copyArray(A);
+        this.currentState = this.copyArray(A);
+        // make sorted A so when changes are made to A they are also made to 
+        this.sorted = new Int32Array(A.length);
+    }
+
     getComparisonCount(): number {
         return this.comparisonCount;
     }
 
-    resetComparisonCount() {
-        this.comparisonCount = 0;
+    getSwapCount(): number {
+        return this.swapCount;
     }
 
+    getHistory(): Action[] {
+        return this.history;
+    }
+
+    public getState(): Int32Array {
+        return this.currentState;
+    }
+
+    public getUnsorted(): Int32Array {
+        return this.unsorted;
+    }
+
+    public getSorted(): Int32Array {
+        return this.sorted;
+    }
+
+    public skipToUnsorted() {
+        this.currentState = this.copyArray(this.unsorted);
+        this.historyIndex = 0;
+    }
+
+    public skipToSorted() {
+        this.currentState = this.copyArray(this.sorted);
+        this.historyIndex = this.history.length - 1;
+    }
+
+    public stepForward(n:number = 1): Action[] {
+        let steps: Action[] = [];
+        for (let i = 0; i < n && this.historyIndex < this.history.length; i++) {
+            let action = this.history[this.historyIndex];
+            steps.push(action);
+            action.apply(this.currentState);
+            this.historyIndex ++;
+        }
+        return steps;
+    }
+
+    public stepBackward(n:number = 1): Action[] {
+        let steps: Action[] = [];
+        for (let i = 0; i < n && this.historyIndex > 0; i++) {
+            this.historyIndex --;
+            let action = this.history[this.historyIndex];
+            steps.push(action);
+            action.apply(this.currentState);
+        }
+        return steps;
+    }
     /**
      * Sorts A[start..end] in place using insertion sort
      * Precondition: 0 <= start <= end <= A.length
      */
     insertionSort(A: Int32Array, start: number, end: number) {
+        this.loadNewArray(A);
         // A[start..i] is sorted
         for (let i = start + 1; i < end; i++) {
-        let j = i;
+            let j = i;
             // A[j..i] is sorted
-            while (j > start && A[j - 1] > A[j]) {
-                this.swap(A, j - 1, j);
-                this.comparisonCount++;
+            while (j > start && this.compareAndLog(A, j - 1, j) === 1) {
+                this.swapAndLog(A, j - 1, j);
                 j--;
             }
         }
+        this.sorted = this.copyArray(A);
     }
 
     /**
@@ -101,20 +172,19 @@ class Sorts {
      * A[start..i] <= A[i] <= A[i+1..end]
      **/
     partition(A: Int32Array, start: number, end: number, pivIndex: number): number {
-      let pivValue = A[pivIndex];
-        this.swap(A, pivIndex, start);
-      let i = start + 1;
-      let j = end;
+        let pivValue = A[pivIndex];
+        this.swapAndLog(A, pivIndex, start);
+        let i = start + 1;
+        let j = end;
         // A[start..i] <= pivValue and A[j..end] > pivValue
         while (i != j) {
             if (A[i] <= pivValue) {
-                this.swap(A, i - 1, i);
+                this.swapAndLog(A, i - 1, i);
                 i++;
             } else {
-                this.swap(A, j - 1, i);
+                this.swapAndLog(A, j - 1, i);
                 j--;
             }
-            this.comparisonCount++;
         }
         return i - 1;
     }
@@ -146,7 +216,6 @@ class Sorts {
                 temp[(i - start) + (j - mid)] = A[j];
                 j++;
             }
-            this.comparisonCount++;
         }
         // temp[0..(i - start) + (j - mid)] is sorted
         while (i < mid) {
@@ -160,7 +229,7 @@ class Sorts {
         }
         // copy temp array elements to A
         for (let i = 0; i < temp.length; i++) {
-            A[i + start] = temp [i];
+            A[i + start] = temp[i];
         }
     }
 
@@ -197,11 +266,11 @@ class Sorts {
         //sort by digits
         for (let i = 0; i <= digits; i++) {
             for (let j = 0; j < A.length; j++) {
-          // in the case of negative numbers sort digits from large to small b/c bigger negative number digit = smaller number
-          let digit = (A[j] < 0) ? 9 - Math.abs(this.getDigit(A[j], i)) : this.getDigit(A[j], i);
+                // in the case of negative numbers sort digits from large to small b/c bigger negative number digit = smaller number
+                let digit = (A[j] < 0) ? 9 - Math.abs(this.getDigit(A[j], i)) : this.getDigit(A[j], i);
                 buckets[digit].append(A[j]);
             }
-        let k = 0;
+            let k = 0;
             for (let j = 0; j < buckets.length; j++) {
                 while (!buckets[j].isEmpty()) {
                     A[k] = buckets[j].remove();
@@ -213,7 +282,7 @@ class Sorts {
         for (let i = 0; i < A.length; i++) {
             buckets[(A[i] < 0) ? 0 : 1].append(A[i]);
         }
-      let k = 0;
+        let k = 0;
         for (let i = 0; i < buckets.length; i++) {
             while (!buckets[i].isEmpty()) {
                 A[k] = buckets[i].remove();
@@ -229,16 +298,42 @@ class Sorts {
         return (n / (Math.floor(Math.pow(10, d)))) % 10;
     }
 
+    swapAndLog(a: Int32Array, i: number, j: number) {
+        this.history.push(new Swap(i, j, a[i], a[j]));
+        this.swapCount ++;
+        Sorts.swap(a, i, j);
+    }
     /**
      * swap a[i] and a[j]
      * pre: 0 <= i, j < a.size
-     * post: values in a[i] and a[j] are swapped
+     * post: values in a[i] and a[j] are swapped and a swap is pushed to history
      */
-    swap(a: Int32Array, i: number, j: number) {
-        this.history.push(new Swap(i, j, a[i], a[j]));
+    public static swap(a: Int32Array, i: number, j: number) {
         let tmp = a[i];
         a[i] = a[j];
         a[j] = tmp;
+    }
+
+    
+
+    compareAndLog(a: Int32Array, i: number, j: number): number {
+        this.history.push(new Comparison(i, j, a[i], a[j]));
+        this.comparisonCount ++;
+        return Sorts.compare(a, i, j);
+    }
+
+    public static compare(a: Int32Array, i: number, j: number): number {
+        let difference = a[i] - a[j];
+        if (difference === 0) return 0;
+        return (difference > 0 ? 1 : -1);
+    }
+
+    copyArray(a: Int32Array): Int32Array {
+        let temp = new Int32Array(a.length);
+        for (let i = 0; i < temp.length; i++) {
+            temp[i] = a[i];
+        }
+        return temp;
     }
 
 }
