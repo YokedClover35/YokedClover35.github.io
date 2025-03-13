@@ -66,13 +66,11 @@ class SortsPlayer {
     }
     run() {
         let now = performance.now();
-        console.log((this === undefined));
         if (this.rects.length > 0) {
             this.applyAnimations(now - this.prevTime);
             this.renderFrame();
         }
         this.prevTime = now;
-        requestAnimationFrame(this.run);
     }
     applyAnimations(dt) {
         for (let i = 0; i < this.rects.length; i++) {
@@ -82,10 +80,9 @@ class SortsPlayer {
     renderFrame() {
         this.resizeCanvas();
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        for (let i = 0; i < 0; i++) {
+        for (let i = 0; i < this.rects.length; i++) {
             this.rects[i].draw(this.ctx, 0, 0);
         }
-        console.log("here");
     }
     resizeCanvas() {
         this.canvas.width = this.canvas.clientWidth;
@@ -93,7 +90,7 @@ class SortsPlayer {
     }
     randomAnimation() {
         let index = Math.floor(Math.random() * this.rects.length);
-        this.rects[index].addAnimation(new LinearAnimation(this.rects[index], 1000, Math.random() * 100 - 50, Math.random() * 100 - 50));
+        this.rects[index].addAnimation(new LinearAnimation(this.rects[index], 1000, Math.random() * 200 - 100, Math.random() * 200 - 100));
     }
 }
 class Rect {
