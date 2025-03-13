@@ -149,7 +149,7 @@ class SortsPlayer {
 
     randomAnimation() {
         let index = Math.floor(Math.random() * this.rects.length);
-        this.rects[index].addAnimation(new LinearAnimation(this.rects[index], 1000, Math.random() * 200 - 50, Math.random() * 200 - 50));
+        this.rects[index].addAnimation(new LinearAnimation(this.rects[index], 1000, Math.random() * 200 - 100, Math.random() * 200 - 100));
     }
 }
 
