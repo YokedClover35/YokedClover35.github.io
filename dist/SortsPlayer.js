@@ -3,12 +3,15 @@ class SortsPlayer {
     constructor(canvas, sortType = "insertion") {
         this.marginFr = .1;
         this.gapFr = .2;
+        this.prevTime = 0;
         this.canvas = canvas;
+        this.resizeCanvas();
         this.ctx = canvas.getContext("2d");
         this.sort = new Sorts();
         this.sortType = sortType;
         this.renderQueue = new Queue();
-        this.rects = [[]];
+        this.rects = [];
+        this.run();
     }
     loadRandomArray(length, min, max) {
         let A = new Int32Array(length);
@@ -36,7 +39,7 @@ class SortsPlayer {
         }
     }
     setRects(A) {
-        this.rects = [[]];
+        this.rects = [];
         let marginPx = this.canvas.clientWidth * this.marginFr;
         let usableWidth = this.canvas.clientWidth - (2 * marginPx);
         let rectWidth = usableWidth / ((this.gapFr + 1) * A.length - this.gapFr);
@@ -45,7 +48,7 @@ class SortsPlayer {
         let currentXPos = this.canvas.clientWidth * this.marginFr;
         let stepSize = rectWidth * (1 + this.gapFr);
         for (let i = 0; i < A.length; i++) {
-            this.rects[0].push(new Rect(A[i], currentXPos, this.canvas.clientHeight - marginPx, rectWidth, marginPx / 5 * A[i], "red"));
+            this.rects.push(new Rect(A[i], currentXPos, this.canvas.clientHeight - marginPx, rectWidth, marginPx / 5 * A[i], "red"));
             currentXPos += stepSize;
         }
     }
@@ -62,17 +65,40 @@ class SortsPlayer {
         }
     }
     run() {
-        this.renderFrame();
+        let now = performance.now();
+        console.log((this === undefined));
+        if (this.rects.length > 0) {
+            this.applyAnimations(now - this.prevTime);
+            this.renderFrame();
+        }
+        this.prevTime = now;
+        requestAnimationFrame(this.run);
+    }
+    applyAnimations(dt) {
+        for (let i = 0; i < this.rects.length; i++) {
+            this.rects[i].applyAnimation(dt);
+        }
     }
     renderFrame() {
+        this.resizeCanvas();
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        for (let i = 0; i < this.rects[0].length; i++) {
-            this.rects[0][i].draw(this.ctx, 0, 0);
+        for (let i = 0; i < 0; i++) {
+            this.rects[i].draw(this.ctx, 0, 0);
         }
+        console.log("here");
+    }
+    resizeCanvas() {
+        this.canvas.width = this.canvas.clientWidth;
+        this.canvas.height = this.canvas.clientHeight;
+    }
+    randomAnimation() {
+        let index = Math.floor(Math.random() * this.rects.length);
+        this.rects[index].addAnimation(new LinearAnimation(this.rects[index], 1000, Math.random() * 100 - 50, Math.random() * 100 - 50));
     }
 }
 class Rect {
     constructor(value, x, y, width, height, color = "white") {
+        this.animationQueue = new Queue;
         this.value = value;
         this.x = x;
         this.y = y;
@@ -97,5 +123,42 @@ class Rect {
     draw(ctx, xOffset, yOffset) {
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x - xOffset, this.y - this.height - yOffset, this.width, this.height);
+    }
+    addAnimation(animation) {
+        this.animationQueue.appendItem(animation);
+    }
+    applyAnimation(dt) {
+        if (this.animationQueue.length > 0) {
+            if (this.animationQueue.peek().applyAnimationStep(dt)) {
+                this.animationQueue.poll();
+            }
+        }
+    }
+}
+class LinearAnimation {
+    constructor(rect, duration, dx, dy) {
+        // duration: number;
+        // dx: number;
+        // dy: number;
+        this.complete = false;
+        this.rect = rect;
+        this.timeElapsed = 0;
+        // this.duration = duration;
+        // this.dx = dx;
+        // this.dy = dy;
+        this.applyAnimationStep = function (dt) {
+            if (this.complete)
+                return true;
+            if (this.timeElapsed + dt > duration) {
+                this.complete = true;
+                dt = duration - this.timeElapsed;
+            }
+            let dxdt = dx / duration;
+            let dydt = dy / duration;
+            this.rect.x += dxdt * dt;
+            this.rect.y += dydt * dt;
+            this.timeElapsed += dt;
+            return this.complete;
+        };
     }
 }

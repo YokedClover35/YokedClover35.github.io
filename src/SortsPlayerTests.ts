@@ -5,3 +5,11 @@ function spacingTest(canvas: HTMLCanvasElement) {
     player.loadRandomArray(10, 0, 20);
     player.renderFrame();
 }
+
+function randomAnimationTest(canvas: HTMLCanvasElement) {
+    let player = new SortsPlayer(canvas, "insertion");
+    player.loadRandomArray(10, 0, 20);
+    for (let i = 0; i < 10; i++) {
+        player.randomAnimation(); 
+    }
+}

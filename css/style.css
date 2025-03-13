@@ -60,15 +60,28 @@ nav {
 .overlay {
     position: absolute;
     display: flex;
+    align-items: center;
     flex-direction: column;
-    margin: 10vh 20vw;
-    width: 60vw;
+    margin: 10vh 10vw;
+    width: 80vw;
     min-width: none;
     top: 5em;
-    gap: 2.5em;
+    gap: 1em;
 }
 
+#main-sort-canvas {
+    width: 98%;
+    aspect-ratio: 2 / 1;
+    align-self: center;
+    background-color: purple;
+    border-radius: 1em;
+}
 
+h2 {
+    font-size: 3em;
+    margin: 0em;
+    font-weight:300;
+}
 
 .box {
     background-color: lightgrey;
