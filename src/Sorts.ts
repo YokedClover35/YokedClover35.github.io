@@ -1,5 +1,7 @@
 interface Action {
     type: string;
+    i: number;
+    j: number;
     getDescription: () => string;
     apply: (A: Int32Array) => void;
 }

@@ -19,23 +19,28 @@ class SortsPlayer {
             A[i] = Math.floor(Math.random() * Math.abs(min + max)) + min;
         }
         this.applySort(A, this.sortType);
-        this.setRects(A);
+        this.setRects(this.sort.getUnsorted());
     }
-    loadArray(Str) {
+    loadArrayFromString(Str) {
         let AStr = Str.split(",");
         let A = new Int32Array(AStr.length);
         for (let i = 0; i < AStr.length; i++) {
             A[i] = parseInt(AStr[i]);
         }
         this.applySort(A, this.sortType);
-        this.setRects(A);
+        this.setRects(this.sort.getUnsorted());
+    }
+    reset() {
+        this.sort.skipToUnsorted();
+        console.log(this.sort.getUnsorted());
+        this.setRects(this.sort.getUnsorted());
+        this.run();
     }
     applySort(A, sortName) {
         if (sortName == "selection") {
         }
-        else if (sortName == "Insertion") {
+        else if (sortName == "insertion") {
             this.sort.insertionSort(A, 0, A.length);
-            console.log(this.sort.getSorted());
         }
     }
     setRects(A) {
@@ -52,7 +57,7 @@ class SortsPlayer {
             currentXPos += stepSize;
         }
     }
-    step(n) {
+    stepForward(n) {
         let temp = this.sort.stepForward(n);
         for (let i = 0; i < temp.length; i++) {
             this.renderQueue.appendItem(temp[i]);
@@ -73,9 +78,39 @@ class SortsPlayer {
         this.prevTime = now;
     }
     applyAnimations(dt) {
+        let animationsComplete = true;
         for (let i = 0; i < this.rects.length; i++) {
-            this.rects[i].applyAnimation(dt);
+            if (!this.rects[i].applyAnimation(dt)) {
+                animationsComplete = false;
+            }
         }
+        if (animationsComplete && this.renderQueue.length > 0) {
+            let action = this.renderQueue.poll();
+            console.log(action.getDescription());
+            this.addActionToRects(action);
+        }
+    }
+    addActionToRects(action) {
+        let type = action.type;
+        let i = action.i;
+        let j = action.j;
+        if (type == "swap") {
+            let ix = this.rects[i].x;
+            let iy = this.rects[i].y;
+            let jx = this.rects[j].x;
+            let jy = this.rects[j].y;
+            this.rects[i].addAnimation(new LinearAnimation(this.rects[i], 200, jx - ix, jy - iy));
+            this.rects[j].addAnimation(new LinearAnimation(this.rects[j], 200, ix - jx, iy - jy));
+            let temp = this.rects[i];
+            this.rects[i] = this.rects[j];
+            this.rects[j] = temp;
+        }
+    }
+    skipAnimations() {
+        while (this.renderQueue.length > 0) {
+            this.applyAnimations(Infinity);
+        }
+        this.applyAnimations(Infinity);
     }
     renderFrame() {
         this.resizeCanvas();
@@ -90,7 +125,7 @@ class SortsPlayer {
     }
     randomAnimation() {
         let index = Math.floor(Math.random() * this.rects.length);
-        this.rects[index].addAnimation(new LinearAnimation(this.rects[index], 1000, Math.random() * 200 - 100, Math.random() * 200 - 100));
+        this.rects[index].addAnimation(new LinearAnimation(this.rects[index], 1000, Math.random() * 200 - 50, Math.random() * 200 - 50));
     }
 }
 class Rect {
@@ -124,25 +159,21 @@ class Rect {
     addAnimation(animation) {
         this.animationQueue.appendItem(animation);
     }
+    // retruns true if all animations are complete
     applyAnimation(dt) {
         if (this.animationQueue.length > 0) {
             if (this.animationQueue.peek().applyAnimationStep(dt)) {
                 this.animationQueue.poll();
             }
         }
+        return this.animationQueue.length === 0;
     }
 }
 class LinearAnimation {
     constructor(rect, duration, dx, dy) {
-        // duration: number;
-        // dx: number;
-        // dy: number;
         this.complete = false;
         this.rect = rect;
         this.timeElapsed = 0;
-        // this.duration = duration;
-        // this.dx = dx;
-        // this.dy = dy;
         this.applyAnimationStep = function (dt) {
             if (this.complete)
                 return true;

@@ -28,25 +28,31 @@ class SortsPlayer {
             A[i] = Math.floor(Math.random() * Math.abs(min + max)) + min;
         }
         this.applySort(A, this.sortType);
-        this.setRects(A);
+        this.setRects(this.sort.getUnsorted());
     }
 
-    loadArray(Str: string) {
+    loadArrayFromString(Str: string) {
         let AStr = Str.split(",");
         let A = new Int32Array(AStr.length);
         for (let i = 0; i < AStr.length; i++) {
             A[i] = parseInt(AStr[i]);
         }
         this.applySort(A, this.sortType);
-        this.setRects(A);
+        this.setRects(this.sort.getUnsorted());
+    }
+
+    reset() {
+        this.sort.skipToUnsorted();
+        console.log(this.sort.getUnsorted());
+        this.setRects(this.sort.getUnsorted());
+        this.run()
     }
 
     applySort(A: Int32Array, sortName: string) {
         if (sortName == "selection") {
             
-        } else if (sortName == "Insertion") {
+        } else if (sortName == "insertion") {
             this.sort.insertionSort(A, 0, A.length)
-            console.log(this.sort.getSorted());
         }
     }
 
@@ -65,7 +71,7 @@ class SortsPlayer {
         }
     }
 
-    step(n: number) {
+    stepForward(n: number) {
         let temp = this.sort.stepForward(n);
         for (let i = 0; i < temp.length; i++) {
             this.renderQueue.appendItem(temp[i]);
@@ -89,9 +95,42 @@ class SortsPlayer {
     }
 
     applyAnimations(dt: number) {
+        let animationsComplete = true;
         for (let i = 0; i < this.rects.length; i++) {
-            this.rects[i].applyAnimation(dt);
+            if (!this.rects[i].applyAnimation(dt)) {
+                animationsComplete = false;
+            }
         }
+        if (animationsComplete && this.renderQueue.length > 0) {
+            let action = this.renderQueue.poll();
+            console.log(action.getDescription());
+            this.addActionToRects(action);
+
+        }
+    }
+
+    addActionToRects(action: Action) {
+        let type = action.type;
+        let i = action.i;
+        let j = action.j;
+        if (type == "swap") {
+            let ix = this.rects[i].x;
+            let iy = this.rects[i].y;
+            let jx = this.rects[j].x;
+            let jy = this.rects[j].y;
+            this.rects[i].addAnimation(new LinearAnimation(this.rects[i], 200, jx - ix, jy - iy));
+            this.rects[j].addAnimation(new LinearAnimation(this.rects[j], 200, ix - jx, iy - jy));
+            let temp = this.rects[i];
+            this.rects[i] = this.rects[j];
+            this.rects[j] = temp;
+        }
+    }
+
+    skipAnimations() {
+        while (this.renderQueue.length > 0) {
+            this.applyAnimations(Infinity);
+        }
+        this.applyAnimations(Infinity);
     }
 
     renderFrame() {
@@ -157,13 +196,14 @@ class Rect {
     addAnimation(animation: RectAnimation) {
         this.animationQueue.appendItem(animation);
     }
-
-    applyAnimation(dt:number) {
+    // retruns true if all animations are complete
+    applyAnimation(dt:number): boolean {
         if(this.animationQueue.length > 0) {
             if (this.animationQueue.peek().applyAnimationStep(dt))  {
                 this.animationQueue.poll();
             }
         }
+        return this.animationQueue.length === 0;
     }
 }
 
@@ -174,17 +214,11 @@ interface RectAnimation {
 class LinearAnimation implements RectAnimation {
     rect: Rect;
     timeElapsed: number;
-    // duration: number;
-    // dx: number;
-    // dy: number;
     complete = false;
     applyAnimationStep: (dt:number) => boolean;
     constructor(rect:Rect, duration: number, dx:number, dy:number) {
         this.rect = rect;
         this.timeElapsed = 0;
-        // this.duration = duration;
-        // this.dx = dx;
-        // this.dy = dy;
         this.applyAnimationStep = function(dt:number): boolean {
             if (this.complete) return true;
             if (this.timeElapsed + dt > duration) {
