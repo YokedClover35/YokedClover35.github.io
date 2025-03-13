@@ -51,12 +51,12 @@ function setMousePosVel(e: MouseEvent) {
     //console.log("x: " + cursorX + " y: " + cursorY + "\nvelX: " + cursorDX + " velY: " + cursorDY);
 }
 
-canvas.addEventListener("mousemove", setMousePosVel);
-canvas.addEventListener("mouseenter", setMousePosVel);
-canvas.addEventListener("mouseleave", setMousePosVel);
+window.addEventListener("mousemove", setMousePosVel);
+// canvas.addEventListener("mouseenter", setMousePosVel);
+// canvas.addEventListener("mouseleave", setMousePosVel);
 
 
-canvas.addEventListener("mousedown", function (e) {
+window.addEventListener("mousedown", function (e) {
     switch (e.button) {
         case 0:
             button1 = true;
@@ -71,7 +71,7 @@ canvas.addEventListener("mousedown", function (e) {
     }
 });
 
-canvas.addEventListener("mouseup", function (e) {
+window.addEventListener("mouseup", function (e) {
     switch (e.button) {
         case 0:
             button1 = false;
@@ -96,65 +96,7 @@ canvas.addEventListener("mouseup", function (e) {
 
 
 
-//LinkedList class
-class LinkedList {
-    item: any | null = null;
-    next: LinkedList | null = null;
-    constructor(item: any | null = null, next: LinkedList | null = null) {
-        this.item = item;
-        this.next = next;
-    }
-    length(): number {
-        if (this.next === null || this.item === null) {
-            return 0;
-        }
-        return 1 + this.next.length();
-    }
-    append(item: any) {
-        if (this.next === null || this.item === null) {
-            this.item = item;
-            this.next = new LinkedList(null, null);
-        } else if (this.next != null) {
-            this.next.append(item);
-        } else {
-            console.error("Attempted to append to null, LinkedList.isEmpty() must be broken");
-        }
-    }
-    removeItem(item: any): boolean {
-        if (this.next === null || this.item === null) {
-            return false;
-        } else if (this.item == item) {
-            this.remove();
-            return true;
-        }
-        return this.next.removeItem(item);
-    }
-    remove(): any {
-        if (this.next !== null && this.item !== null) {
-            let temp = this.item
-            this.item = this.next.item;
-            this.next = this.next.next;
-            return temp;
-        }
-        return null;
-    }
-    advance(n: number): LinkedList | null {
-        if (n <= 0) {
-            return this;
-        } else if (this.next === null || this.item === null) {
-            return null;
-        } else {
-            return this.next.advance(n - 1);
-        }
-    }
-    at(p: number): any {
-        let sublist = this.advance(p);
-        return (sublist === null) ? null : sublist.item;
-    }
-    isEmpty() {
-        return this.item === null;
-    }
-}
+
 
 
 //Tile class
@@ -176,7 +118,7 @@ class Tile {
 
     addPoint(p: Point) {
         this.numPoints++;
-        this.points.append(p);
+        this.points.appendItem(p);
     }
     removePoint(p: Point) {
         (this.points.removeItem(p)) ? this.numPoints-- : console.log("Could not remove point!");
@@ -895,8 +837,8 @@ function test() {
     let list = new LinkedList(null, null);
     let p = new Point(1, 1, 0, 0, 10);
     let p2 = new Point(2, 2, 0, 0, 10);
-    list.append(p2);
-    list.append(p);
+    list.appendItem(p2);
+    list.appendItem(p);
     console.log("remove sucessful: " + list.removeItem(p));
     console.log(list);
     console.log(list.isEmpty());

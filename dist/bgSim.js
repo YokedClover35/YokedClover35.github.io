@@ -43,8 +43,8 @@ function setMousePosVel(e) {
     //console.log("x: " + cursorX + " y: " + cursorY + "\nvelX: " + cursorDX + " velY: " + cursorDY);
 }
 window.addEventListener("mousemove", setMousePosVel);
-window.addEventListener("mouseenter", setMousePosVel);
-window.addEventListener("mouseleave", setMousePosVel);
+// canvas.addEventListener("mouseenter", setMousePosVel);
+// canvas.addEventListener("mouseleave", setMousePosVel);
 window.addEventListener("mousedown", function (e) {
     switch (e.button) {
         case 0:
@@ -78,70 +78,6 @@ window.addEventListener("mouseup", function (e) {
 //     maxCursorInteractionDistance -= e.deltaY;
 //     console.log(maxCursorInteractionDistance);
 // });
-//LinkedList class
-class LinkedList {
-    constructor(item = null, next = null) {
-        this.item = null;
-        this.next = null;
-        this.item = item;
-        this.next = next;
-    }
-    length() {
-        if (this.next === null || this.item === null) {
-            return 0;
-        }
-        return 1 + this.next.length();
-    }
-    append(item) {
-        if (this.next === null || this.item === null) {
-            this.item = item;
-            this.next = new LinkedList(null, null);
-        }
-        else if (this.next != null) {
-            this.next.append(item);
-        }
-        else {
-            console.error("Attempted to append to null, LinkedList.isEmpty() must be broken");
-        }
-    }
-    removeItem(item) {
-        if (this.next === null || this.item === null) {
-            return false;
-        }
-        else if (this.item == item) {
-            this.remove();
-            return true;
-        }
-        return this.next.removeItem(item);
-    }
-    remove() {
-        if (this.next !== null && this.item !== null) {
-            let temp = this.item;
-            this.item = this.next.item;
-            this.next = this.next.next;
-            return temp;
-        }
-        return null;
-    }
-    advance(n) {
-        if (n <= 0) {
-            return this;
-        }
-        else if (this.next === null || this.item === null) {
-            return null;
-        }
-        else {
-            return this.next.advance(n - 1);
-        }
-    }
-    at(p) {
-        let sublist = this.advance(p);
-        return (sublist === null) ? null : sublist.item;
-    }
-    isEmpty() {
-        return this.item === null;
-    }
-}
 //Tile class
 class Tile {
     constructor() {
@@ -154,7 +90,7 @@ class Tile {
     }
     addPoint(p) {
         this.numPoints++;
-        this.points.append(p);
+        this.points.appendItem(p);
     }
     removePoint(p) {
         (this.points.removeItem(p)) ? this.numPoints-- : console.log("Could not remove point!");
@@ -762,8 +698,8 @@ canvas.height = canvas.clientHeight;
 // updateWindowSize(null);
 // const pointMap = new Map();
 console.log("canvas.width: " + canvas.width + " canvas.height " + canvas.height);
-const pointGrid = new ArrayGrid(Math.max(canvas.width, canvas.height) / 30);
-const pointCount = 100;
+const pointGrid = new ArrayGrid(Math.max(canvas.width, canvas.height) / 50);
+const pointCount = 1000;
 const maxNodeLines = 1;
 const pointCutoff = 1;
 const timeStep = .05;
@@ -772,11 +708,11 @@ const maxVel = 0;
 const friction = 0.05;
 const physicsStepsPerFrame = 1;
 const displayPoints = true;
-const displayLines = true;
+const displayLines = false;
 const pointToPointCollisions = true;
 const pointForceMultiplier = 5;
 const cursorCarryForceMultiplier = 5 / physicsStepsPerFrame;
-const cursorForceMultiplier = 3 / physicsStepsPerFrame;
+const cursorForceMultiplier = 1 / physicsStepsPerFrame;
 let totalFramerate = new Int32Array(50);
 let stepFramerate = new Int32Array(50);
 let stepFrametime = new Int32Array(50);
@@ -793,8 +729,8 @@ function test() {
     let list = new LinkedList(null, null);
     let p = new Point(1, 1, 0, 0, 10);
     let p2 = new Point(2, 2, 0, 0, 10);
-    list.append(p2);
-    list.append(p);
+    list.appendItem(p2);
+    list.appendItem(p);
     console.log("remove sucessful: " + list.removeItem(p));
     console.log(list);
     console.log(list.isEmpty());

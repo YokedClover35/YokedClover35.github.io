@@ -268,7 +268,7 @@ class Sorts {
             for (let j = 0; j < A.length; j++) {
                 // in the case of negative numbers sort digits from large to small b/c bigger negative number digit = smaller number
                 let digit = (A[j] < 0) ? 9 - Math.abs(this.getDigit(A[j], i)) : this.getDigit(A[j], i);
-                buckets[digit].append(A[j]);
+                buckets[digit].appendItem(A[j]);
             }
             let k = 0;
             for (let j = 0; j < buckets.length; j++) {
@@ -280,7 +280,7 @@ class Sorts {
         }
         //sort negatives
         for (let i = 0; i < A.length; i++) {
-            buckets[(A[i] < 0) ? 0 : 1].append(A[i]);
+            buckets[(A[i] < 0) ? 0 : 1].appendItem(A[i]);
         }
         let k = 0;
         for (let i = 0; i < buckets.length; i++) {
