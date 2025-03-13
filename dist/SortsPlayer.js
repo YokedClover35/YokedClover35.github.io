@@ -99,11 +99,15 @@ class SortsPlayer {
             let iy = this.rects[i].y;
             let jx = this.rects[j].x;
             let jy = this.rects[j].y;
-            this.rects[i].addAnimation(new LinearAnimation(this.rects[i], 200, jx - ix, jy - iy));
-            this.rects[j].addAnimation(new LinearAnimation(this.rects[j], 200, ix - jx, iy - jy));
+            this.rects[i].addAnimation(new LinearAnimation(this.rects[i], 300, jx - ix, jy - iy, "green"));
+            this.rects[j].addAnimation(new LinearAnimation(this.rects[j], 300, ix - jx, iy - jy, "green"));
             let temp = this.rects[i];
             this.rects[i] = this.rects[j];
             this.rects[j] = temp;
+        }
+        else if (type == "comparison") {
+            this.rects[i].addAnimation(new ColorAnimation(this.rects[i], 200, "blue"));
+            this.rects[j].addAnimation(new ColorAnimation(this.rects[j], 200, "blue"));
         }
     }
     skipAnimations() {
@@ -125,7 +129,7 @@ class SortsPlayer {
     }
     randomAnimation() {
         let index = Math.floor(Math.random() * this.rects.length);
-        this.rects[index].addAnimation(new LinearAnimation(this.rects[index], 1000, Math.random() * 200 - 100, Math.random() * 200 - 100));
+        this.rects[index].addAnimation(new LinearAnimation(this.rects[index], 1000, Math.random() * 200 - 100, Math.random() * 200 - 100, "green"));
     }
 }
 class Rect {
@@ -170,9 +174,10 @@ class Rect {
     }
 }
 class LinearAnimation {
-    constructor(rect, duration, dx, dy) {
+    constructor(rect, duration, dx, dy, color) {
         this.complete = false;
         this.rect = rect;
+        this.oldRectColor = rect.color;
         this.timeElapsed = 0;
         this.applyAnimationStep = function (dt) {
             if (this.complete)
@@ -180,11 +185,37 @@ class LinearAnimation {
             if (this.timeElapsed + dt > duration) {
                 this.complete = true;
                 dt = duration - this.timeElapsed;
+                rect.color = this.oldRectColor;
+            }
+            else {
+                rect.color = color;
             }
             let dxdt = dx / duration;
             let dydt = dy / duration;
             this.rect.x += dxdt * dt;
             this.rect.y += dydt * dt;
+            this.timeElapsed += dt;
+            return this.complete;
+        };
+    }
+}
+class ColorAnimation {
+    constructor(rect, duration, color) {
+        this.complete = false;
+        this.rect = rect;
+        this.oldRectColor = rect.color;
+        this.timeElapsed = 0;
+        this.applyAnimationStep = function (dt) {
+            if (this.complete)
+                return true;
+            if (this.timeElapsed + dt > duration) {
+                this.complete = true;
+                dt = duration - this.timeElapsed;
+                rect.color = this.oldRectColor;
+            }
+            else {
+                rect.color = color;
+            }
             this.timeElapsed += dt;
             return this.complete;
         };
