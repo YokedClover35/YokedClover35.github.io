@@ -6,9 +6,11 @@ class SortsPlayer {
     sortType: string;
     renderQueue: Queue;
     rects: Rect[];
-    marginFr = .1;
+    marginFr = .05;
     gapFr = .2;
+    defaultAnimationSpeed = 200;
 
+    paused = true;
     prevTime:number = 0;
 
     constructor(canvas:HTMLCanvasElement, sortType:string = "insertion") {
@@ -48,6 +50,22 @@ class SortsPlayer {
         this.run()
     }
 
+    pause() {
+        this.paused = true;
+    }
+
+    play() {
+        this.paused = false;
+    }
+
+    playPause() {
+        this.paused = !this.paused;
+    }
+
+    setAnimationSpeed(ms: number) {
+        this.defaultAnimationSpeed = ms;
+    }
+
     applySort(A: Int32Array, sortName: string) {
         if (sortName == "selection") {
             
@@ -60,15 +78,25 @@ class SortsPlayer {
         this.rects = [];
         let marginPx = this.canvas.clientWidth * this.marginFr;
         let usableWidth = this.canvas.clientWidth - (2 * marginPx);
+        let usableHeight = this.canvas.clientHeight - (2 * marginPx);
+        let rectHeightStep = usableHeight / this.maxOf(A);
         let rectWidth = usableWidth / ((this.gapFr + 1) * A.length - this.gapFr);
         console.log("rect width: " + rectWidth);
         console.log("usable: " + usableWidth + " calculated usable: " + (rectWidth * A.length + rectWidth * this.gapFr * (A.length - 1)));
         let currentXPos = this.canvas.clientWidth * this.marginFr;
         let stepSize = rectWidth * (1 + this.gapFr);
         for(let i = 0; i < A.length; i++) {
-            this.rects.push(new Rect(A[i], currentXPos, this.canvas.clientHeight - marginPx, rectWidth, marginPx / 5 * A[i], "red"));
+            this.rects.push(new Rect(A[i], currentXPos, this.canvas.clientHeight - marginPx, rectWidth, rectHeightStep * A[i], "red"));
             currentXPos += stepSize;
         }
+    }
+
+    maxOf(A: Int32Array): number {
+        let max = -Infinity; 
+        for (let i = 0; i < A.length; i++) {
+            max = Math.max(max, A[i]);
+        }
+        return max;
     }
 
     stepForward(n: number) {
@@ -87,10 +115,8 @@ class SortsPlayer {
 
     run() {
         let now = performance.now();
-        if (this.rects.length > 0) {
-            this.applyAnimations(now - this.prevTime);
-            this.renderFrame();
-        }
+        this.applyAnimations(now - this.prevTime);
+        this.renderFrame();
         this.prevTime = now;
     }
 
@@ -100,13 +126,18 @@ class SortsPlayer {
             if (!this.rects[i].applyAnimation(dt)) {
                 animationsComplete = false;
             }
+        } if (animationsComplete) {
+            if (!this.paused && this.renderQueue.length === 0) {
+                this.stepForward(1);
+            }
+            if (this.renderQueue.length > 0) {
+                let action = this.renderQueue.poll();
+                // console.log(action.getDescription());
+                this.addActionToRects(action);
+            }
         }
-        if (animationsComplete && this.renderQueue.length > 0) {
-            let action = this.renderQueue.poll();
-            console.log(action.getDescription());
-            this.addActionToRects(action);
-
-        }
+        
+        
     }
 
     addActionToRects(action: Action) {
@@ -118,14 +149,14 @@ class SortsPlayer {
             let iy = this.rects[i].y;
             let jx = this.rects[j].x;
             let jy = this.rects[j].y;
-            this.rects[i].addAnimation(new LinearAnimation(this.rects[i], 300, jx - ix, jy - iy, "green"));
-            this.rects[j].addAnimation(new LinearAnimation(this.rects[j], 300, ix - jx, iy - jy, "green"));
+            this.rects[i].addAnimation(new LinearAnimation(this.rects[i], this.defaultAnimationSpeed, jx - ix, jy - iy, "green"));
+            this.rects[j].addAnimation(new LinearAnimation(this.rects[j], this.defaultAnimationSpeed, ix - jx, iy - jy, "green"));
             let temp = this.rects[i];
             this.rects[i] = this.rects[j];
             this.rects[j] = temp;
-        } else if (type == "comparison") {
-            this.rects[i].addAnimation(new ColorAnimation(this.rects[i], 200, "blue"));
-            this.rects[j].addAnimation(new ColorAnimation(this.rects[j], 200, "blue"));
+        } else if (type == "comparison" && this.defaultAnimationSpeed > 10) {
+            this.rects[i].addAnimation(new ColorAnimation(this.rects[i], this.defaultAnimationSpeed, "blue"));
+            this.rects[j].addAnimation(new ColorAnimation(this.rects[j], this.defaultAnimationSpeed, "blue"));
         }
     }
 

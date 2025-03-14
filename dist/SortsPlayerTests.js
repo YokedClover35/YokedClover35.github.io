@@ -1,6 +1,5 @@
 "use strict";
 let player;
-let paused = true;
 function spacingTest(canvas) {
     console.log("w: " + canvas.clientWidth + "h: " + canvas.clientHeight);
     player = new SortsPlayer(canvas, "insertion");
@@ -15,17 +14,15 @@ function randomAnimationTest(canvas) {
     for (let i = 0; i < 10; i++) {
         player.randomAnimation();
     }
-    paused = false;
 }
 function initializeRandom(canvas) {
     player = new SortsPlayer(canvas, "insertion");
-    player.loadRandomArray(10, 1, 15);
+    player.loadRandomArray(200, 1, 150);
     player.renderFrame();
+    setAnimationSpeed(.1);
 }
 function playPause() {
-    if (player !== null) {
-        paused = !paused;
-    }
+    player === null || player === void 0 ? void 0 : player.playPause();
 }
 function stepForward(n = 1) {
     player === null || player === void 0 ? void 0 : player.stepForward(n);
@@ -35,6 +32,9 @@ function stepBackward(n = 1) {
 }
 function reset() {
     player === null || player === void 0 ? void 0 : player.reset();
+}
+function setAnimationSpeed(ms) {
+    player === null || player === void 0 ? void 0 : player.setAnimationSpeed(ms);
 }
 runAnimation();
 function runAnimation() {
