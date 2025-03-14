@@ -14,12 +14,12 @@ function randomAnimationTest(canvas: HTMLCanvasElement, id:string) {
     }
 }
 
-function initializeRandom(canvas: HTMLCanvasElement, sortType:string, id: string) {
+function initializeRandom(canvas: HTMLCanvasElement, sortType:string, id: string, entries: number, animationSpeed: number) {
     let player = new SortsPlayer(canvas, sortType, id);
     players.set(id, player);
-    player.loadRandomArray(100, 1, 200);
+    player.loadRandomArray(entries, 1, entries * 2);
     player.renderFrame();
-    player.setAnimationSpeed(.1);
+    player.setAnimationSpeed(animationSpeed);
     player.repeat = false;
 }
 
@@ -29,7 +29,7 @@ function initializeMiniPlayer(canvas: HTMLCanvasElement, sortType:string, id: st
     player.loadRandomArray(6, 1, 10);
     player.renderFrame();
     player.setAnimationSpeed(200);
-    player.repeat = true;
+    player.repeat = false;
     player.play();
 }
 
@@ -47,6 +47,14 @@ function stepBackward(n: number = 1, id: string) {
 
 function reset(id: string) {
     players.get(id)?.reset()
+}
+
+function skipToUnsorted(id: string) {
+    players.get(id)?.skipToUnsorted();
+}
+
+function skipToSorted(id: string) {
+    players.get(id)?.skipToSorted();
 }
 
 function setAnimationSpeed(ms: number, id: string) {

@@ -51,11 +51,22 @@ class SortsPlayer {
         this.applySort(A, this.sortType);
         this.setRects(this.sort.getUnsorted());
     }
+    
+    skipToUnsorted() {
+        this.reset();
+    }
+
+    skipToSorted() {
+        this.sort.skipToSorted();
+        console.log(this.sort.getSorted());
+        this.setRects(this.sort.getSorted());
+        this.run();
+    }
 
     reset() {
         this.sort.skipToUnsorted();
         this.setRects(this.sort.getUnsorted());
-        this.run()
+        this.run();
     }
 
     pause() {
@@ -75,10 +86,12 @@ class SortsPlayer {
     }
 
     applySort(A: Int32Array, sortName: string) {
-        if (sortName == "selection") {
-            
-        } else if (sortName == "insertion") {
-            this.sort.insertionSort(A, 0, A.length)
+        if (sortName == "insertion") {
+            this.sort.insertionSort(A, 0, A.length);
+        } else if (sortName == "quick") {
+            this.sort.quickSort(A, 0, A.length);
+        } else {
+            this.sort.insertionSort(A, 0, A.length);
         }
     }
 

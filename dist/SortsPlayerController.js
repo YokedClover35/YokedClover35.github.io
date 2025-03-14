@@ -11,12 +11,12 @@ function randomAnimationTest(canvas, id) {
         player.randomAnimation();
     }
 }
-function initializeRandom(canvas, sortType, id) {
+function initializeRandom(canvas, sortType, id, entries, animationSpeed) {
     let player = new SortsPlayer(canvas, sortType, id);
     players.set(id, player);
-    player.loadRandomArray(100, 1, 200);
+    player.loadRandomArray(entries, 1, entries * 2);
     player.renderFrame();
-    player.setAnimationSpeed(.1);
+    player.setAnimationSpeed(animationSpeed);
     player.repeat = false;
 }
 function initializeMiniPlayer(canvas, sortType, id) {
@@ -25,7 +25,7 @@ function initializeMiniPlayer(canvas, sortType, id) {
     player.loadRandomArray(6, 1, 10);
     player.renderFrame();
     player.setAnimationSpeed(200);
-    player.repeat = true;
+    player.repeat = false;
     player.play();
 }
 function playPause(id) {
@@ -43,6 +43,14 @@ function stepBackward(n = 1, id) {
 function reset(id) {
     var _a;
     (_a = players.get(id)) === null || _a === void 0 ? void 0 : _a.reset();
+}
+function skipToUnsorted(id) {
+    var _a;
+    (_a = players.get(id)) === null || _a === void 0 ? void 0 : _a.skipToUnsorted();
+}
+function skipToSorted(id) {
+    var _a;
+    (_a = players.get(id)) === null || _a === void 0 ? void 0 : _a.skipToSorted();
 }
 function setAnimationSpeed(ms, id) {
     var _a;

@@ -79,7 +79,7 @@ nav {
     margin-top: 1.70em;
     background-color: grey;
     border-radius: .5em;
-    transition: 0.3s;
+    transition: 0.1s;
 }
 
 .mini-player {
@@ -112,6 +112,25 @@ nav {
     min-width: none;
     top: 5em;
     gap: 1em;
+}
+
+.flip-img-horizontal {
+    transform: scaleX(-1);
+}
+
+.control-button {
+    border-radius: .5em;
+    padding: .5em;
+    width: 90px;
+    height: 90px;
+}
+
+.control-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.control-button:active {
+    background-color: rgba(0, 0, 0, 0.33);
 }
 
 #main-sort-canvas {

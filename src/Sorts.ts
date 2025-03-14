@@ -79,9 +79,6 @@ class Sorts {
     currentState: Int32Array = new Int32Array(0);
     historyIndex: number = 0;
 
-    constructor() {
-    }
-
     loadNewArray(A: Int32Array) {
         this.comparisonCount = 0;
         this.swapCount = 0;
@@ -180,7 +177,7 @@ class Sorts {
         let j = end;
         // A[start..i] <= pivValue and A[j..end] > pivValue
         while (i != j) {
-            if (A[i] <= pivValue) {
+            if (this.compareAndLog(A, i, pivIndex) <= 0) {
                 this.swapAndLog(A, i - 1, i);
                 i++;
             } else {
@@ -191,14 +188,19 @@ class Sorts {
         return i - 1;
     }
 
-    /** use quicksort to sort the subarray A[start..end] */
     quickSort(A: Int32Array, start: number, end: number) {
+        this.loadNewArray(A);
+        this.quickSort_r(A, 0, A.length);
+    }
+
+    /** use quicksort to sort the subarray A[start..end] */
+    quickSort_r(A: Int32Array, start: number, end: number) {
         if (end - start < 2) {
             return;
         }
         let mid = this.partition(A, start, end, start);
-        this.quickSort(A, start, mid);
-        this.quickSort(A, mid + 1, end);
+        this.quickSort_r(A, start, mid);
+        this.quickSort_r(A, mid + 1, end);
     }
 
     /**
