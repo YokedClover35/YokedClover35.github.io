@@ -30,12 +30,43 @@
             <nav>
                 <a id="nav-logo" href="index.html">Logo</a>
                 <ul id="nav-bar">
-                    <li><a class="nav-link" href="selectionSort.html">Selection</a></li>
-                    <li><a class="nav-link" href="insertionSort.html">Insertion</a></li>
-                    <li><a class="nav-link" href="mergeSort.html">Merge</a></li>
-                    <li><a class="nav-link" href="quickSort.html">Quick</a></li>
-                    <li><a class="nav-link" href="heapSort.html">Heap</a></li>
-                    <li><a class="nav-link" href="RadixSort.html">Radix</a></li>
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-selection`) , `insertion`, `mp-selection`);" onmouseleave="players.delete(`mp-selection`)">
+                        <a class="nav-link" href="selectionSort.html">Selection</a>
+                        <a class="nav-card" href="heapSort.html">
+                            <canvas class="mini-player" id="mp-selection"></canvas>
+                        </a>
+                    </li>
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-insertion`) , `insertion`, `mp-insertion`);" onmouseleave="players.delete(`mp-selection`)">
+                        <a class="nav-link" href="insertionSort.html">Insertion</a>
+                        <a class="nav-card" href="heapSort.html">
+                            <canvas class="mini-player" id="mp-insertion"></canvas>
+                        </a>
+                    </li>
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-merge`) , `insertion`, `mp-merge`);" onmouseleave="players.delete(`mp-selection`)">
+                        <a class="nav-link" href="mergeSort.html">Merge</a>
+                        <a class="nav-card" href="heapSort.html">
+                            <canvas class="mini-player" id="mp-merge"></canvas>
+                        </a>
+                    </li>
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-quick`) , `insertion`, `mp-quick`);" onmouseleave="players.delete(`mp-selection`)">
+                        <a class="nav-link" href="quickSort.html">Quick</a>
+                        <a class="nav-card" href="heapSort.html">
+                            <canvas class="mini-player" id="mp-quick"></canvas>
+                        </a>
+                    </li>
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-heap`) , `insertion`, `mp-heap`);" onmouseleave="players.delete(`mp-selection`)">
+                        <a class="nav-link" href="heapSort.html">Heap</a>
+                        <a class="nav-card" href="heapSort.html">
+                            <canvas class="mini-player" id="mp-heap"></canvas>
+                        </a>
+                    </li>
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-radix`) , `insertion`, `mp-radix`);" onmouseleave="players.delete(`mp-selection`)">
+                        <a class="nav-link" href="RadixSort.html">Radix</a>
+                        <a class="nav-card" href="heapSort.html">
+                            <canvas class="mini-player" id="mp-radix"></canvas>
+                        </a>
+                    </li>
+                    
                 </ul>
             </nav>
         </header>
@@ -64,7 +95,12 @@
     <script src="dist/Containers.js"></script>
     <script src="dist/bgSim.js"></script>
     <script src="dist/home.js"></script>
-    
+    <script src="dist/Sorts.js"></script>
+    <script src="dist/SortsPlayer.js"></script>
+    <script src="dist/SortsPlayerController.js"></script>
+    <script>
+        
+    </script>
 </body>
 
 

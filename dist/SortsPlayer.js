@@ -1,11 +1,14 @@
 "use strict";
 class SortsPlayer {
-    constructor(canvas, sortType = "insertion") {
+    constructor(canvas, sortType = "insertion", id) {
         this.marginFr = .05;
         this.gapFr = .2;
         this.defaultAnimationSpeed = 200;
         this.paused = true;
         this.prevTime = 0;
+        this.running = true;
+        this.repeat = false;
+        this.id = id;
         this.canvas = canvas;
         this.resizeCanvas();
         this.ctx = canvas.getContext("2d");
@@ -14,6 +17,9 @@ class SortsPlayer {
         this.renderQueue = new Queue();
         this.rects = [];
         this.run();
+    }
+    equals(id) {
+        return this.id == id;
     }
     loadRandomArray(length, min, max) {
         let A = new Int32Array(length);
@@ -34,7 +40,6 @@ class SortsPlayer {
     }
     reset() {
         this.sort.skipToUnsorted();
-        console.log(this.sort.getUnsorted());
         this.setRects(this.sort.getUnsorted());
         this.run();
     }
@@ -64,8 +69,6 @@ class SortsPlayer {
         let usableHeight = this.canvas.clientHeight - (2 * marginPx);
         let rectHeightStep = usableHeight / this.maxOf(A);
         let rectWidth = usableWidth / ((this.gapFr + 1) * A.length - this.gapFr);
-        console.log("rect width: " + rectWidth);
-        console.log("usable: " + usableWidth + " calculated usable: " + (rectWidth * A.length + rectWidth * this.gapFr * (A.length - 1)));
         let currentXPos = this.canvas.clientWidth * this.marginFr;
         let stepSize = rectWidth * (1 + this.gapFr);
         for (let i = 0; i < A.length; i++) {
@@ -84,6 +87,9 @@ class SortsPlayer {
         let temp = this.sort.stepForward(n);
         for (let i = 0; i < temp.length; i++) {
             this.renderQueue.appendItem(temp[i]);
+        }
+        if (this.repeat && this.renderQueue.length === 0) {
+            this.reset();
         }
     }
     stepBackward(n) {
@@ -111,7 +117,6 @@ class SortsPlayer {
             }
             if (this.renderQueue.length > 0) {
                 let action = this.renderQueue.poll();
-                // console.log(action.getDescription());
                 this.addActionToRects(action);
             }
         }

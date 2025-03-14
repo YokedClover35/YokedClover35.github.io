@@ -17,7 +17,9 @@
                 <a id="nav-logo" href="index.html">Logo</a>
                 
                 <ul id="nav-bar">
-                    <li><a class="nav-link" href="selectionSort.html">Selection</a></li>
+                    <li><a class="nav-link" href="selectionSort.html">Selection</a>
+                        <div class="nav-card">hello</div>
+                    </li>
                     <li><a class="nav-link" href="insertionSort.html">Insertion</a></li>
                     <li><a class="nav-link" href="mergeSort.html">Merge</a></li>
                     <li><a class="nav-link" href="quickSort.html">Quick</a></li>
@@ -31,12 +33,12 @@
             <div class="overlay box">
                 <h2>Insertion Sort</h2>
                 <canvas id="main-sort-canvas"></canvas>
-                <a href="#" onclick="randomAnimationTest(document.getElementById(`main-sort-canvas`));">apply random animations</a>
-                <a href="#" onclick="initializeRandom(document.getElementById(`main-sort-canvas`));">Initalize Random Sort</a>
-                <a href="#" onclick="stepBackward();">Backward</a>
-                <a href="#" onclick="playPause();">Play Pause</a>
-                <a href="#" onclick="stepForward();">Forward</a>
-                <a href="#" onclick="reset();">Reset</a>
+                <a href="#" onclick="randomAnimationTest(document.getElementById(`main-sort-canvas`), `main`);">apply random animations</a>
+                <a href="#" onclick="initializeRandom(document.getElementById(`main-sort-canvas`), `insertion`, `main`);">Initalize Random Sort</a>
+                <a href="#" onclick="stepBackward(1, `main`);">Backward</a>
+                <a href="#" onclick="playPause(`main`);">Play Pause</a>
+                <a href="#" onclick="stepForward(1, `main`);">Forward</a>
+                <a href="#" onclick="reset(`main`);">Reset</a>
             </div>
         </main>
         <footer>
@@ -48,7 +50,7 @@
     <script src="dist/Sorts.js"></script>
     <script src="dist/SortsTests.js"></script>
     <script src="dist/SortsPlayer.js"></script>
-    <script src="dist/SortsPlayerTests.js"></script>
+    <script src="dist/SortsPlayerController.js"></script>
 </body>
 
 
