@@ -122,7 +122,7 @@ class Tile {
             let p = sublist.item;
             // let vel = Math.sqrt(p.velX * p.velX + p.velY * p.velY);
             // DrawHelper.drawCircle(p.x, p.y, p.radius, [Math.max(255 - (vel) * 10, 0), 0, 0]);
-            DrawHelper.drawCircle(p.x, p.y, p.radius, [0, 0, 0]); //[(p.velX > 1) ? 255 : 0, (p.velX < -1) ? 255 : 0, 0]);
+            DrawHelper.drawCircle(p.x, p.y, p.radius, [230, 111, 92]); //[(p.velX > 1) ? 255 : 0, (p.velX < -1) ? 255 : 0, 0]);
             sublist = sublist.next;
         }
     }
@@ -139,7 +139,7 @@ class Line {
         this.y2 = y2;
     }
     draw(width) {
-        DrawHelper.drawLine(this.x1, this.y1, this.x2, this.y2, width, 'round', [0, 0, 0]);
+        DrawHelper.drawLine(this.x1, this.y1, this.x2, this.y2, width, 'round', [254, 155, 98]);
     }
 }
 //Grid class
@@ -421,7 +421,7 @@ class ArrayGrid {
     }
     drawLine(p1, p2) {
         if (p1.distToPoint(p2) <= this.tileSize) {
-            DrawHelper.drawLine(p1.x, p1.y, p2.x, p2.y, 2, 'square', [0, 0, 0]);
+            DrawHelper.drawLine(p1.x, p1.y, p2.x, p2.y, 2, 'square', [59, 0, 23]);
         }
     }
     // drawLines(ctx:CanvasRenderingContext2D) {

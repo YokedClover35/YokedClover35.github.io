@@ -1,12 +1,28 @@
-title {
+#color-palette {
+    color: #131f2f;
+    color: #102e4d;
+    color: #3f4f6e;
+    color: #695c7b;
+    color: #e66f5c;
+    color: #fe9b62;
+
+    color: #020a1e;
+    color: #011a4c;
+    color: #03326c;
+    color: #b2bed5;
+
+}
+
+/* title {
     display: block;
     padding: 1em;
     background-color: cornflowerblue;
     font-size: large;
-}
+} */
 
-#wrapper {
-    background-color: lightgrey;
+body {
+    background-color: #626670;
+    color: #b2bed5;
 }
 
 header {
@@ -23,7 +39,7 @@ nav {
     width: 100%;
     grid-template-columns: auto 1fr;
     grid-template-rows: auto;
-    background-color: aqua;
+    background-color: #03326c;
     align-items: center;
     margin: 0;
     padding: 0;
@@ -40,14 +56,14 @@ nav {
 #nav-logo {
     font-size: 2em;
     text-decoration: none;
-    color: black;
     margin-left: .5em;
+    color: #e66f5c;
     font-weight: bold;
 }
 
 .nav-link {
     text-decoration: none;
-    color: #fff;
+    color: #b2bed5;
     padding: 0.25em 0.5em;
     /* justify-content: center; */
     
@@ -59,13 +75,13 @@ nav {
     align-items: center;
 }
 .dropdown:hover .nav-link {
-    background-color: grey;
+    background-color: #011a4c;
     border-top-left-radius: .5em;
     border-top-right-radius: .5em;
 }
 
 .dropdown:hover .nav-link:hover {
-    background-color: black;
+    background-color: #3f4f6e;
     border-top-left-radius: .5em;
     border-top-right-radius: .5em;
 }
@@ -77,20 +93,20 @@ nav {
     max-height: 0px;
     position: absolute;
     margin-top: 1.70em;
-    background-color: grey;
+    background-color: #011a4c;
     border-radius: .5em;
-    transition: 0.1s;
+    transition: 0.3s;
 }
 
 .mini-player {
     width: 20vw;
     aspect-ratio: 4 / 3;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: #020a1e;
     margin: 1em;
 }
 
 .nav-card:hover {
-    background-color: black;
+    background-color: #3f4f6e;
     border-radius: .5em;
 }
 
@@ -126,18 +142,18 @@ nav {
 }
 
 .control-button:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .control-button:active {
-    background-color: rgba(0, 0, 0, 0.33);
+    background-color: rgba(255, 255, 255, 0.33);
 }
 
 #main-sort-canvas {
     width: 98%;
     aspect-ratio: 2 / 1;
     align-self: center;
-    background-color: purple;
+    background-color: #011a4c;
     border-radius: 1em;
 }
 
@@ -148,7 +164,7 @@ h2 {
 }
 
 .box {
-    background-color: lightgrey;
+    background-color: #03326c;
     border-radius: 1em;
     padding: 1em;
 }
@@ -157,7 +173,6 @@ h2 {
     margin: 0;
     width: 100%;
     height: 200vh;
-    background-color: white;
 }
 
 #side-menu-wrapper {
@@ -172,18 +187,20 @@ h2 {
     font-size: 2em;
     font-weight: bolder;
     text-decoration: none;
-    color: black;
+    color: #b2bed5;
     padding: .5em;
-    background-color: blue;
+    background-color: #011a4c;
     border-top-left-radius: .5em;
     border-bottom-left-radius: .5em;
 }
 
 #side-menu {
+    border-top: solid 2px #011a4c;
+    color: #b2bed5;
     height: 100vh;
     max-width: 0;
     overflow-x: hidden;
-    background-color: red;
+    background-color: #03326c;
     transition: 0.3s;
 }
 
@@ -208,6 +225,7 @@ body {
 }
 
 footer {
-    grid-area: footer;
-    background-color: green;
+    display: none;
+    /* grid-area: footer; */
+    /* background-color: green; */
 }

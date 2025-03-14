@@ -22,10 +22,10 @@ function initializeRandom(canvas, sortType, id, entries, animationSpeed) {
 function initializeMiniPlayer(canvas, sortType, id) {
     let player = new SortsPlayer(canvas, sortType, id);
     players.set(id, player);
-    player.loadRandomArray(6, 1, 10);
+    player.loadRandomArray(7, 1, 20);
     player.renderFrame();
     player.setAnimationSpeed(200);
-    player.repeat = false;
+    player.repeat = true;
     player.play();
 }
 function playPause(id) {

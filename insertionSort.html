@@ -23,7 +23,7 @@
                 <canvas id="main-sort-canvas"></canvas>
                 <div id="player-controls">
                     <!-- <a href="#" onclick="randomAnimationTest(document.getElementById(`main-sort-canvas`), `main`);">apply random animations</a> -->
-                    <a href="#" onclick="initializeRandom(document.getElementById(`main-sort-canvas`), `insertion`, `main`, 100, 0.1);">Initalize Sort</a>
+                    <!-- <a href="#" onclick="initializeRandom(document.getElementById(`main-sort-canvas`), `insertion`, `main`, 100, 0.1);">Initalize Sort</a> -->
                     <img src="images/skip-to-start.png" alt="Skip To Unsorted" class="control-button" onclick="skipToUnsorted(`main`);"></img>
                     <img src="images/step-icon.png" alt="Backward" class="control-button" onclick="stepBackward(1, `main`);"></img>
                     <img src="images/play-pause.png" alt="Play Pause" class="control-button" onclick="playPause(`main`);"></img>
@@ -82,7 +82,9 @@
             <p>&#58&#41</p>
         </footer>
     </div>
-    
+    <script>
+        initializeRandom(document.getElementById(`main-sort-canvas`), `insertion`, `main`, 100, 0.1);
+    </script>
 </body>
 
 
