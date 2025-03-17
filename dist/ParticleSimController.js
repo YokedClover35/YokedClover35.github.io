@@ -11,7 +11,6 @@ function run() {
     let now = performance.now();
     // console.log(now - prevTime);
     particleSim.run(now - prevTime);
-    // particleSim.run(16);
     prevTime = now;
     requestAnimationFrame(run);
 }

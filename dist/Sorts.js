@@ -1,4 +1,81 @@
 "use strict";
+class ActionNote {
+    constructor(s) {
+        this.type = "note";
+        this.i = -1;
+        this.j = -1;
+        this.s = s;
+    }
+    apply() {
+    }
+    getDescription() {
+        return this.s;
+    }
+}
+class CreateTemp {
+    constructor(i, j) {
+        this.type = "createTemp";
+        this.i = i;
+        this.j = j;
+    }
+    apply(A) {
+    }
+    getDescription() {
+        return `A temporary array of indecies ${this.i} through ${this.j} is made.`;
+    }
+}
+class RetrieveTemp {
+    constructor(i, j) {
+        this.type = "retrieveTemp";
+        this.i = i;
+        this.j = j;
+    }
+    apply(A, B) {
+        for (let i = this.i; i < this.j; i++) {
+            Sorts.swap(A, i, B, i);
+        }
+    }
+    getDescription() {
+        return `Index ${this.i} to ${this.j} are copied from the temporary array to the main array. the temporary array is discarded.`;
+    }
+}
+class TempSwap {
+    constructor(i, j) {
+        this.type = "tempSwap";
+        this.i = i;
+        this.j = j;
+    }
+    apply(A, B) {
+        Sorts.swap(A, this.i, B, this.j);
+    }
+    getDescription() {
+        return `Index ${this.i} in the main array is swapped with index ${this.j} in the temorary array.`;
+    }
+}
+class RecursiveDown {
+    constructor(i, j) {
+        this.type = "recursiveDown";
+        this.i = i;
+        this.j = j;
+    }
+    apply() {
+    }
+    getDescription() {
+        return `Indecies ${this.i} through ${this.j} are sent to a recursive call.`;
+    }
+}
+class RecursiveUp {
+    constructor(i, j) {
+        this.type = "recursiveUp";
+        this.i = i;
+        this.j = j;
+    }
+    apply() {
+    }
+    getDescription() {
+        return `Indecies ${this.i} through ${this.j} are done with a recursive call.`;
+    }
+}
 class Swap {
     constructor(i, j, x, y) {
         this.type = "swap";
@@ -7,8 +84,8 @@ class Swap {
         this.x = x;
         this.y = y;
     }
-    apply(A) {
-        Sorts.swap(A, this.i, this.j);
+    apply(A, B) {
+        Sorts.swap(A, this.i, A, this.j);
     }
     getDescription() {
         return `Index ${this.i} with value ${this.x} and index ${this.j} with value ${this.y} are swapped.`;
@@ -54,10 +131,12 @@ class Sorts {
         // maintains a count of comparisons performed by this Sorts object
         this.comparisonCount = 0;
         this.swapCount = 0;
+        this.recursiveCalls = 0;
         this.history = [];
         this.unsorted = new Int32Array(0);
         this.sorted = new Int32Array(0);
         this.currentState = new Int32Array(0);
+        this.temp = new Int32Array(0);
         this.historyIndex = 0;
     }
     loadNewArray(A) {
@@ -69,6 +148,7 @@ class Sorts {
         this.currentState = this.copyArray(A);
         // make sorted A so when changes are made to A they are also made to 
         this.sorted = new Int32Array(A.length);
+        this.temp = new Int32Array(A.length);
     }
     getComparisonCount() {
         return this.comparisonCount;
@@ -101,7 +181,7 @@ class Sorts {
         for (let i = 0; i < n && this.historyIndex < this.history.length; i++) {
             let action = this.history[this.historyIndex];
             steps.push(action);
-            action.apply(this.currentState);
+            action.apply(this.currentState, this.currentState);
             this.historyIndex++;
         }
         return steps;
@@ -112,7 +192,7 @@ class Sorts {
             this.historyIndex--;
             let action = this.history[this.historyIndex];
             steps.push(action);
-            action.apply(this.currentState);
+            action.apply(this.currentState, this.currentState);
         }
         return steps;
     }
@@ -127,7 +207,7 @@ class Sorts {
             let j = i;
             // A[j..i] is sorted
             while (j > start && this.compareAndLog(A, j - 1, j) === 1) {
-                this.swapAndLog(A, j - 1, j);
+                this.swapAndLog(A, j - 1, A, j);
                 j--;
             }
         }
@@ -141,18 +221,18 @@ class Sorts {
      * A[start..i] <= A[i] <= A[i+1..end]
      **/
     partition(A, start, end, pivIndex) {
-        let pivValue = A[pivIndex];
-        this.swapAndLog(A, pivIndex, start);
+        // let pivValue = A[pivIndex];
+        this.swapAndLog(A, pivIndex, A, start);
         let i = start + 1;
         let j = end;
         // A[start..i] <= pivValue and A[j..end] > pivValue
         while (i != j) {
-            if (this.compareAndLog(A, i, pivIndex) <= 0) {
-                this.swapAndLog(A, i - 1, i);
+            if (this.compareAndLog(A, i - 1, i) >= 0) {
+                this.swapAndLog(A, i - 1, A, i);
                 i++;
             }
             else {
-                this.swapAndLog(A, j - 1, i);
+                this.swapAndLog(A, j - 1, A, i);
                 j--;
             }
         }
@@ -160,16 +240,20 @@ class Sorts {
     }
     quickSort(A, start, end) {
         this.loadNewArray(A);
-        this.quickSort_r(A, 0, A.length);
+        this.quickSort_r(A, start, end);
+        this.sorted = this.copyArray(A);
     }
     /** use quicksort to sort the subarray A[start..end] */
     quickSort_r(A, start, end) {
+        this.logRecursiveDown(start, end);
         if (end - start < 2) {
+            this.logRecursiveUp(start, end);
             return;
         }
         let mid = this.partition(A, start, end, start);
         this.quickSort_r(A, start, mid);
         this.quickSort_r(A, mid + 1, end);
+        this.logRecursiveUp(start, end);
     }
     /**
      * merge the sorted subarrays A[start..mid] and A[mid..end] into
@@ -178,43 +262,47 @@ class Sorts {
     merge(A, start, mid, end) {
         let i = start;
         let j = mid;
-        let temp = new Int32Array(end - start);
         // temp[0..(i - start) + (j - mid)] is sorted
         while (i < mid && j < end) {
-            if (A[i] <= A[j]) {
-                temp[(i - start) + (j - mid)] = A[i];
+            if (this.compareAndLog(A, i, j) <= 0) {
+                this.swapAndLog(A, i, this.temp, i);
                 i++;
             }
             else {
-                temp[(i - start) + (j - mid)] = A[j];
+                this.swapAndLog(A, j, this.temp, j);
                 j++;
             }
         }
         // temp[0..(i - start) + (j - mid)] is sorted
         while (i < mid) {
-            temp[(i - start) + (j - mid)] = A[i];
+            this.swapAndLog(A, i, this.temp, i);
             i++;
         }
         // temp[0..(i - start) + (j - mid)] is sorted
         while (j < end) {
-            temp[(i - start) + (j - mid)] = A[j];
+            this.swapAndLog(A, j, this.temp, j);
             j++;
         }
         // copy temp array elements to A
-        for (let i = 0; i < temp.length; i++) {
-            A[i + start] = temp[i];
-        }
+        this.retrieveTempAndLog(start, end, A, this.temp);
+    }
+    mergesort(A, start, end) {
+        this.loadNewArray(A);
+        this.mergeSort_r(A, start, end);
+        this.sorted = this.copyArray(A);
     }
     /** use mergesort to sort the subarray A[start..end] */
-    mergeSort(A, start, end) {
+    mergeSort_r(A, start, end) {
+        this.logRecursiveDown(start, end);
         let length = end - start;
         let mid = Math.floor((start + end) / 2);
         if (length < 2) {
             return;
         }
-        this.mergeSort(A, start, mid);
-        this.mergeSort(A, mid, end);
+        this.mergeSort_r(A, start, mid);
+        this.mergeSort_r(A, mid, end);
         this.merge(A, start, mid, end);
+        this.logRecursiveUp(start, end);
     }
     /** Sort A using LSD radix sort. Uses counting sort to sort on each digit */
     radixSort(A) {
@@ -264,20 +352,38 @@ class Sorts {
     getDigit(n, d) {
         return (n / (Math.floor(Math.pow(10, d)))) % 10;
     }
-    swapAndLog(a, i, j) {
-        this.history.push(new Swap(i, j, a[i], a[j]));
+    logRecursiveDown(i, j) {
+        this.history.push(new RecursiveDown(i, j));
+        this.recursiveCalls++;
+    }
+    logRecursiveUp(i, j) {
+        this.history.push(new RecursiveUp(i, j));
+        this.recursiveCalls++;
+    }
+    retrieveTempAndLog(i, j, a, temp) {
+        let action = new RetrieveTemp(i, j);
+        this.history.push(action);
+        action.apply(a, temp);
+    }
+    swapAndLog(a, i, b, j) {
+        if (a === b) {
+            this.history.push(new Swap(i, j, a[i], b[j]));
+        }
+        else {
+            this.history.push(new TempSwap(i, j));
+        }
         this.swapCount++;
-        Sorts.swap(a, i, j);
+        Sorts.swap(a, i, b, j);
     }
     /**
      * swap a[i] and a[j]
      * pre: 0 <= i, j < a.size
      * post: values in a[i] and a[j] are swapped and a swap is pushed to history
      */
-    static swap(a, i, j) {
+    static swap(a, i, b, j) {
         let tmp = a[i];
-        a[i] = a[j];
-        a[j] = tmp;
+        a[i] = b[j];
+        b[j] = tmp;
     }
     compareAndLog(a, i, j) {
         this.history.push(new Comparison(i, j, a[i], a[j]));

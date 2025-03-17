@@ -172,13 +172,7 @@ class PointGrid {
     Postcondition: a new point is added to grid[gx][gy]
     */
     addPointgc(p, gx, gy) {
-        // console.log(this.tiles);
-        if (this.tiles[gx][gy] !== undefined) {
-            this.tiles[gx][gy].addPoint(p);
-        }
-        else {
-            console.log("could not add point at x: " + gx + " y: " + gy + "!");
-        }
+        this.tiles[gx][gy].addPoint(p);
     }
     addPointac(p) {
         this.addPointgc(p, this.toGridCoord(p.x), this.toGridCoord(p.y));
@@ -189,17 +183,7 @@ class PointGrid {
     Postcondition: point p is removed from grid[gx][gy]
     */
     removePointgc(p, gx, gy) {
-        try {
-            this.tiles[gx][gy].removePoint(p);
-        }
-        catch (error) {
-            console.log(this.tiles);
-            console.log(p);
-            console.log(gx);
-            console.log(gy);
-            console.log(this.tileSize);
-            console.log(this.tiles[gx][gy]);
-        }
+        this.tiles[gx][gy].removePoint(p);
     }
     removePointac(p) {
         this.removePointgc(p, this.toGridCoord(p.x), this.toGridCoord(p.y));
@@ -345,7 +329,7 @@ class Point {
         this.radius = radius;
     }
     static newRandom(minX, maxX, minY, maxY, maxVel, radiusMin, radiusMax) {
-        return new Point((Math.random() * (maxX - minX - radiusMax * 2)) + minY + radiusMax, (Math.random() * (maxY - minY - radiusMax * 2)) + minY + radiusMax, (Math.random() * maxVel * 2) - maxVel, (Math.random() * maxVel * 2) - maxVel, (Math.random() * (radiusMax - radiusMin)) + radiusMin);
+        return new Point((Math.random() * (maxX - minX - radiusMax * 2)) + minX + radiusMax, (Math.random() * (maxY - minY - radiusMax * 2)) + minY + radiusMax, (Math.random() * maxVel * 2) - maxVel, (Math.random() * maxVel * 2) - maxVel, (Math.random() * (radiusMax - radiusMin)) + radiusMin);
     }
     static newFromConfig(config) {
         return Point.newRandom(config.xMin, config.xMax, config.yMin, config.yMax, config.velMax, config.radiusMin, config.radiusMax);
@@ -543,10 +527,10 @@ class PointCreationConfig {
 }
 class SimPhysicsConfig {
     constructor() {
-        this.timeStep = .05;
-        this.interactionDistance = 10;
+        this.timeStep = .5;
+        this.interactionDistance = 50;
         this.bounceFactor = 0.5;
-        this.maxVel = 0;
+        this.maxVel = 1;
         this.frictionMultiplier = 0.02;
         this.pointToPointCollisions = true;
         this.pointForceMultiplier = 10;
@@ -554,21 +538,21 @@ class SimPhysicsConfig {
         this.cursorForceMultiplier = 3;
         this.maxCursorInteractionDistance = 500;
         this.maxCursorCarryDistance = 100;
-        this.cursorRingDistance = this.maxCursorInteractionDistance / 4;
+        this.cursorRingDistance = 200;
     }
 }
 class SimDisplayConfig {
     constructor() {
         this.displayPoints = true;
-        this.displayLines = false;
-        this.frameFade = true;
+        this.displayLines = true;
+        this.frameFade = false;
         this.frameFadeFactor = 0.05;
     }
 }
 class DebugConfig {
     constructor() {
         this.debug = false;
-        this.showFps = true;
+        this.showFps = false;
     }
 }
 class ParticleSimConfig {
@@ -604,7 +588,7 @@ class ParticleSim {
             this.pointGrid.resize(this.canvas.width, this.canvas.height);
             //clear previous frame
             if (this.config.simDisplayConfig.frameFade) {
-                this.ctx.fillStyle = `rgba(255, 255, 255, ${this.config.simDisplayConfig.frameFadeFactor})`;
+                this.ctx.fillStyle = `rgba(98, 102, 112, ${this.config.simDisplayConfig.frameFadeFactor})`;
                 this.ctx.fillRect(0, 0, canvas.width, canvas.height);
             }
             else {
@@ -616,7 +600,7 @@ class ParticleSim {
             this.ct.reset();
             // apply x physics steps
             for (let i = 0; i < this.config.physicsStepsPerFrame; i++) {
-                this.step(dt * this.config.simPhysicsConfig.timeStep / this.config.physicsStepsPerFrame);
+                this.step(this.config.simPhysicsConfig.timeStep / this.config.physicsStepsPerFrame);
             }
             // draw all the things
             if (this.config.simDisplayConfig.displayLines) {

@@ -2,18 +2,6 @@
 
 let players = new Map<String, SortsPlayer>();
 
-function randomAnimationTest(canvas: HTMLCanvasElement, id:string) {
-    let player = players.get(id);
-    if (player === null) {
-        player = new SortsPlayer(canvas, "insertion", id);
-        players.set(id, player);
-        player.loadRandomArray(10, 1, 20);
-    }
-    for (let i = 0; i < 10; i++) {
-        player!.randomAnimation(); 
-    }
-}
-
 function initializeRandom(canvas: HTMLCanvasElement, sortType:string, id: string, entries: number, animationSpeed: number) {
     let player = new SortsPlayer(canvas, sortType, id);
     players.set(id, player);

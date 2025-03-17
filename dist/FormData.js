@@ -16,9 +16,11 @@ function fillForm(id, sim) {
     //config classes
     form.pointCount.value = sim.config.pointCount;
     form.physicsStepsPerFrame.value = sim.config.physicsStepsPerFrame;
+    //point creation
     form.velMax.value = sim.pointCreationConfig.velMax;
     form.radiusMin.value = sim.pointCreationConfig.radiusMin;
     form.radiusMax.value = sim.pointCreationConfig.radiusMax;
+    //physics
     form.timeStep.value = config.simPhysicsConfig.timeStep;
     form.interactionDistance.value = config.simPhysicsConfig.interactionDistance;
     form.bounceFactor.value = config.simPhysicsConfig.bounceFactor;
@@ -31,10 +33,14 @@ function fillForm(id, sim) {
     form.maxCursorInteractionDistance.value = config.simPhysicsConfig.maxCursorInteractionDistance;
     form.maxCursorCarryDistance.value = config.simPhysicsConfig.maxCursorCarryDistance;
     form.cursorRingDistance.value = config.simPhysicsConfig.cursorRingDistance;
+    //display
     form.displayPoints.checked = config.simDisplayConfig.displayPoints;
     form.displayLines.checked = config.simDisplayConfig.displayLines;
     form.frameFade.checked = config.simDisplayConfig.frameFade;
     form.frameFadeFactor.value = config.simDisplayConfig.frameFadeFactor;
+    //debug
+    form.debug.checked = config.debugConfig.debug;
+    form.showFps.checked = config.debugConfig.showFps;
 }
 function exportForm(id, sim) {
     console.log("form submitted");
@@ -73,8 +79,7 @@ function exportForm(id, sim) {
     config.simDisplayConfig.displayLines = form.displayLines.checked;
     config.simDisplayConfig.frameFade = form.frameFade.checked;
     config.simDisplayConfig.frameFadeFactor = form.frameFadeFactor.value != "" ? form.frameFadeFactor.value : config.simDisplayConfig.frameFadeFactor;
-    // debug = false;
-    // showFps = true;
-    // pointCount = 4000;
-    // physicsStepsPerFrame = 2;
+    //debug
+    config.debugConfig.debug = form.debug.checked;
+    config.debugConfig.showFps = form.showFps.checked;
 }

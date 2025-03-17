@@ -7,9 +7,13 @@ class SortsPlayer {
     sortType: string;
     renderQueue: Queue;
     rects: Rect[];
+    tempRects: Rect[];
     marginFr = .05;
     gapFr = .2;
     defaultAnimationSpeed = 200;
+    offsetX = 0;
+    offsetY = 0;
+    recursiveOffset = 50;
 
     paused = true;
     prevTime:number = 0;
@@ -26,6 +30,7 @@ class SortsPlayer {
         this.sortType = sortType;
         this.renderQueue = new Queue();
         this.rects = [];
+        this.tempRects = [];
         this.run();
     }
 
@@ -54,9 +59,13 @@ class SortsPlayer {
     
     skipToUnsorted() {
         this.reset();
+        this.offsetX = 0;
+        this.offsetY = 0;
     }
 
     skipToSorted() {
+        this.offsetX = 0;
+        this.offsetY = 0;
         this.sort.skipToSorted();
         console.log(this.sort.getSorted());
         this.setRects(this.sort.getSorted());
@@ -64,6 +73,8 @@ class SortsPlayer {
     }
 
     reset() {
+        this.offsetX = 0;
+        this.offsetY = 0;
         this.sort.skipToUnsorted();
         this.setRects(this.sort.getUnsorted());
         this.run();
@@ -97,6 +108,7 @@ class SortsPlayer {
 
     setRects(A: Int32Array) {
         this.rects = [];
+        this.tempRects = [];
         let marginPx = this.canvas.clientWidth * this.marginFr;
         let usableWidth = this.canvas.clientWidth - (2 * marginPx);
         let usableHeight = this.canvas.clientHeight - (2 * marginPx);
@@ -106,6 +118,7 @@ class SortsPlayer {
         let stepSize = rectWidth * (1 + this.gapFr);
         for(let i = 0; i < A.length; i++) {
             this.rects.push(new Rect(A[i], currentXPos, this.canvas.clientHeight - marginPx, rectWidth, rectHeightStep * A[i], "red"));
+            this.tempRects.push(new Rect(0, currentXPos, this.canvas.clientHeight - marginPx - this.recursiveOffset, rectWidth, rectHeightStep * 2, "blue"))
             currentXPos += stepSize;
         }
     }
@@ -145,7 +158,7 @@ class SortsPlayer {
     applyAnimations(dt: number) {
         let animationsComplete = true;
         for (let i = 0; i < this.rects.length; i++) {
-            if (!this.rects[i].applyAnimation(dt)) {
+            if (!this.rects[i].applyAnimation(dt) || !this.tempRects[i].applyAnimation(dt)) {
                 animationsComplete = false;
             }
         } if (animationsComplete) {
@@ -165,6 +178,7 @@ class SortsPlayer {
         let type = action.type;
         let i = action.i;
         let j = action.j;
+        console.log(type);
         if (type == "swap") {
             let ix = this.rects[i].x;
             let iy = this.rects[i].y;
@@ -175,9 +189,43 @@ class SortsPlayer {
             let temp = this.rects[i];
             this.rects[i] = this.rects[j];
             this.rects[j] = temp;
+        } else if (type == "tempSwap") {
+            let ix = this.rects[i].x;
+            let iy = this.rects[i].y;
+            let jx = this.tempRects[j].x;
+            let jy = this.tempRects[j].y;
+            this.rects[i].addAnimation(new LinearAnimation(this.rects[i], this.defaultAnimationSpeed, jx - ix, jy - iy, "green"));
+            this.tempRects[j].addAnimation(new LinearAnimation(this.tempRects[j], this.defaultAnimationSpeed, ix - jx, iy - jy, "green"));
+            let temp = this.rects[i];
+            this.rects[i] = this.tempRects[j];
+            this.tempRects[j] = temp;
         } else if (type == "comparison" && this.defaultAnimationSpeed > 10) {
             this.rects[i].addAnimation(new ColorAnimation(this.rects[i], this.defaultAnimationSpeed, "blue"));
             this.rects[j].addAnimation(new ColorAnimation(this.rects[j], this.defaultAnimationSpeed, "blue"));
+        } else if (type == "recursiveDown") {
+            for(let index = i; index < j; index++) {
+                this.rects[index].addAnimation(new LinearAnimation(this.rects[index], this.defaultAnimationSpeed, 0, this.recursiveOffset, "orange"));
+                this.tempRects[index].addAnimation(new LinearAnimation(this.tempRects[index], this.defaultAnimationSpeed, 0, this.recursiveOffset, "orange"));
+            }
+            this.offsetY += this.recursiveOffset;
+        } else if (type == "recursiveUp") {
+            for(let index = i; index < j; index++) {
+                this.rects[index].addAnimation(new LinearAnimation(this.rects[index], this.defaultAnimationSpeed, 0, -this.recursiveOffset, "orange"));
+                this.tempRects[index].addAnimation(new LinearAnimation(this.tempRects[index], this.defaultAnimationSpeed, 0, -this.recursiveOffset, "orange"));
+            }
+            this.offsetY -= this.recursiveOffset;
+        } else if (type == "retrieveTemp") {
+            for (let index = i; index < j; index++) {
+                let regx = this.rects[index].x;
+                let regy = this.rects[index].y;
+                let tempx = this.tempRects[index].x;
+                let tempy = this.tempRects[index].y;
+                this.rects[index].addAnimation(new LinearAnimation(this.rects[index], this.defaultAnimationSpeed, tempx - regx, tempy - regy, "green"));
+                this.tempRects[index].addAnimation(new LinearAnimation(this.tempRects[index], this.defaultAnimationSpeed, regx - tempx, regy - tempy, "green"));
+                let temp = this.rects[index];
+                this.rects[index] = this.tempRects[index];
+                this.tempRects[index] = temp;
+            }
         }
     }
 
@@ -192,7 +240,8 @@ class SortsPlayer {
         this.resizeCanvas();
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             for (let i = 0; i < this.rects.length; i++) {
-            this.rects[i].draw(this.ctx, 0, 0);
+            this.rects[i].draw(this.ctx, this.offsetX, this.offsetY);
+            this.tempRects[i].draw(this.ctx, this.offsetX, this.offsetY);
             
         }
     }
@@ -202,10 +251,6 @@ class SortsPlayer {
         this.canvas.height = this.canvas.clientHeight;
     }
 
-    randomAnimation() {
-        let index = Math.floor(Math.random() * this.rects.length);
-        this.rects[index].addAnimation(new LinearAnimation(this.rects[index], 1000, Math.random() * 200 - 100, Math.random() * 200 - 100, "green"));
-    }
 }
 
 class Rect {

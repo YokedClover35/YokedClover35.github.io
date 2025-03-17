@@ -191,12 +191,7 @@ class PointGrid {
     Postcondition: a new point is added to grid[gx][gy]
     */
     addPointgc(p: Point, gx: number, gy: number) {
-        // console.log(this.tiles);
-        if (this.tiles[gx][gy] !== undefined) {
-            this.tiles[gx][gy].addPoint(p);
-        } else {
-            console.log("could not add point at x: " + gx + " y: " + gy + "!");
-        }
+        this.tiles[gx][gy].addPoint(p);
     }
 
     addPointac(p: Point) {
@@ -209,20 +204,7 @@ class PointGrid {
     Postcondition: point p is removed from grid[gx][gy]
     */
     removePointgc(p: Point, gx: number, gy: number) {
-        
-        try {
-            this.tiles[gx][gy].removePoint(p);
-            
-        } catch (error) {
-            console.log(this.tiles)
-            console.log(p);
-            console.log(gx);
-            console.log(gy);
-            console.log(this.tileSize);
-            console.log(this.tiles[gx][gy])
-        }
-
-        
+        this.tiles[gx][gy].removePoint(p);
     }
 
     removePointac(p: Point) {
@@ -392,7 +374,7 @@ class Point {
         this.radius = radius;
     }
     static newRandom(minX: number, maxX: number, minY: number, maxY: number, maxVel: number, radiusMin: number, radiusMax: number): Point {
-        return new Point((Math.random() * (maxX - minX - radiusMax * 2)) + minY + radiusMax,
+        return new Point((Math.random() * (maxX - minX - radiusMax * 2)) + minX + radiusMax,
         (Math.random() * (maxY - minY - radiusMax * 2)) + minY + radiusMax,
         (Math.random() * maxVel * 2) - maxVel,
         (Math.random() * maxVel * 2) - maxVel,
@@ -611,10 +593,10 @@ class PointCreationConfig {
 }
 
 class SimPhysicsConfig {
-    timeStep = .05;
-    interactionDistance = 10;
+    timeStep = .5;
+    interactionDistance = 50;
     bounceFactor = 0.5;
-    maxVel = 0;
+    maxVel = 1;
     frictionMultiplier = 0.02;
     pointToPointCollisions = true;
     pointForceMultiplier = 10;
@@ -622,7 +604,7 @@ class SimPhysicsConfig {
     cursorForceMultiplier = 3;
     maxCursorInteractionDistance = 500;
     maxCursorCarryDistance = 100;
-    cursorRingDistance = this.maxCursorInteractionDistance / 4;
+    cursorRingDistance = 200;
     constructor() {
 
     }
@@ -631,8 +613,8 @@ class SimPhysicsConfig {
 
 class SimDisplayConfig {
     displayPoints = true;
-    displayLines = false;
-    frameFade = true;
+    displayLines = true;
+    frameFade = false;
     frameFadeFactor = 0.05;
     constructor() {
         
@@ -641,7 +623,7 @@ class SimDisplayConfig {
 
 class DebugConfig {
     debug = false;
-    showFps = true;
+    showFps = false;
     constructor() {
         
     }
@@ -693,7 +675,7 @@ class ParticleSim {
             this.pointGrid.resize(this.canvas.width, this.canvas.height);
             //clear previous frame
             if (this.config.simDisplayConfig.frameFade) {
-                this.ctx.fillStyle = `rgba(255, 255, 255, ${this.config.simDisplayConfig.frameFadeFactor})`;
+                this.ctx.fillStyle = `rgba(98, 102, 112, ${this.config.simDisplayConfig.frameFadeFactor})`;
                 this.ctx.fillRect(0, 0, canvas.width, canvas.height);
             } else {
                 this.ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -706,7 +688,7 @@ class ParticleSim {
 
             // apply x physics steps
             for (let i = 0; i < this.config.physicsStepsPerFrame; i++) {
-                this.step(dt * this.config.simPhysicsConfig.timeStep / this.config.physicsStepsPerFrame);
+                this.step(this.config.simPhysicsConfig.timeStep / this.config.physicsStepsPerFrame);
             }
             
 

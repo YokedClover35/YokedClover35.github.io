@@ -36,31 +36,31 @@
                             <canvas class="mini-player" id="mp-selection"></canvas>
                         </a>
                     </li>
-                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-insertion`) , `insertion`, `mp-insertion`);" onmouseleave="players.delete(`mp-selection`)">
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-insertion`) , `insertion`, `mp-insertion`);" onmouseleave="players.delete(`mp-insertion`)">
                         <a class="nav-link" href="insertionSort.html">Insertion</a>
                         <a class="nav-card" href="insertionSort.html">
                             <canvas class="mini-player" id="mp-insertion"></canvas>
                         </a>
                     </li>
-                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-merge`) , `merge`, `mp-merge`);" onmouseleave="players.delete(`mp-selection`)">
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-merge`) , `merge`, `mp-merge`);" onmouseleave="players.delete(`mp-merge`)">
                         <a class="nav-link" href="mergeSort.html">Merge</a>
                         <a class="nav-card" href="mergeSort.html">
                             <canvas class="mini-player" id="mp-merge"></canvas>
                         </a>
                     </li>
-                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-quick`) , `quick`, `mp-quick`);" onmouseleave="players.delete(`mp-selection`)">
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-quick`) , `quick`, `mp-quick`);" onmouseleave="players.delete(`mp-quick`)">
                         <a class="nav-link" href="quickSort.html">Quick</a>
                         <a class="nav-card" href="quickSort.html">
                             <canvas class="mini-player" id="mp-quick"></canvas>
                         </a>
                     </li>
-                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-heap`) , `heap`, `mp-heap`);" onmouseleave="players.delete(`mp-selection`)">
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-heap`) , `heap`, `mp-heap`);" onmouseleave="players.delete(`mp-heap`)">
                         <a class="nav-link" href="heapSort.html">Heap</a>
                         <a class="nav-card" href="heapSort.html">
                             <canvas class="mini-player" id="mp-heap"></canvas>
                         </a>
                     </li>
-                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-radix`) , `radix`, `mp-radix`);" onmouseleave="players.delete(`mp-selection`)">
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-radix`) , `radix`, `mp-radix`);" onmouseleave="players.delete(`mp-radix`)">
                         <a class="nav-link" href="RadixSort.html">Radix</a>
                         <a class="nav-card" href="RadixSort.html">
                             <canvas class="mini-player" id="mp-radix"></canvas>
@@ -130,7 +130,15 @@
                         <label for="frameFadeFactor">frame fade factor</label>
                         <input type="number" step="any" name="frameFadeFactor" id="frameFadeFactor">
                     </div>
-                    <input type="submit" value="Submit">
+                    <br>
+                    <h3>Sim Debug Config</h3>
+                    <div class="config-section" id="sim-debug-config">
+                        <label for="debug">debug</label>
+                        <input type="checkbox" name="debug" id="debug">
+                        <label for="showFps">show fps</label>
+                        <input type="checkbox" name="showFps" id="showFps">
+                    </div>
+                    <input type="submit" id="config-submit-button" value="Submit">
                     <br>
                 </form>
             </div>
