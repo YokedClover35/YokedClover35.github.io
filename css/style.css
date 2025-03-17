@@ -169,7 +169,7 @@ h2 {
     padding: 1em;
 }
 
-#canvas1{
+#particle-sim{
     margin: 0;
     width: 100%;
     height: 200vh;
@@ -208,10 +208,14 @@ h2 {
     margin: 1em;
 }
 
-#side-menu form {
-    display: flex;
-    flex-direction: column;
-    display:inline-block;
+#side-menu form .config-section{
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+
+}
+
+#side-menu form .config-section input {
+    min-width: 0;
 }
 
 #side-menu.show {

@@ -13,7 +13,7 @@
     <div id="wrapper">
         
         <main id="main-wrapper">
-            <canvas id="canvas1"></canvas>
+            <canvas id="particle-sim"></canvas>
             <div class="overlay">
                 <div class="box">
                     Lorem ipsum dolor, sit amet consectetur adipisicing elit. Obcaecati ratione, odio aliquam aliquid ipsam eum? Corporis, iusto! Aperiam minus laudantium facilis! Harum soluta quae maxime et consequuntur perferendis quaerat veritatis.
@@ -73,6 +73,61 @@
             <a href="#" id="side-menu-button">&#8801;</a>
             <div id="side-menu">
                 <form>
+                    <h4>General Config</h4>
+                    <div class="config-section" id="general-config">
+                        <label for="pointCount">point count</label>
+                        <input type="number" name="pointCount" id="test-number" placeholder="1000" required>
+                        <label for="physicsStepsPerFrame">physics steps per frame</label>
+                        <input type="number" name="physicsStepsPerFrame" id="test-number" placeholder="2" required>
+                    </div>
+                    <br>
+                    <h4>Point Creation Config</h4>
+                    <div class="config-section" id="point-creation-config">
+                        <label for="velMax">initial particle velocity</label>
+                        <input type="number" name="velMax" id="test-number" placeholder="2" required>
+                        <label for="radiusMin">min radius</label>
+                        <input type="number" name="radiusMin" id="test-number" placeholder="10" required>
+                        <label for="radiusMax">max radius</label>
+                        <input type="number" name="radiusMax" id="test-number" placeholder="10" required>
+                    </div>
+                    <br>
+                    <h4>Sim Physics Config</h4>
+                    <div class="config-section" id="sim-physics-config">
+                        <label for="timeStep">time step</label>
+                        <input type="number" name="timeStep" id="test-number" placeholder="0.05" required>
+                        <label for="interactionDistance">interaction distance</label>
+                        <input type="number" name="interactionDistance" id="test-number" placeholder="100" required>
+                        <label for="bounceFactor">wall bounciness</label>
+                        <input type="number" name="bounceFactor" id="test-number" placeholder="0.5" required>
+                        <label for="maxVel">friction velocity threshold</label>
+                        <input type="number" name="maxVel" id="test-number" placeholder="0" required>
+                        <label for="frictionMultiplier">friction multiplier</label>
+                        <input type="number" name="frictionMultiplier" id="test-number" placeholder="0.02" required>
+                        <label for="pointToPointCollisions">point to point collisions</label>
+                        <input type="number" name="pointToPointCollisions" id="test-number" placeholder="true" required>
+                        <label for="pointForceMultiplier">point to point force multipliers</label>
+                        <input type="number" name="pointForceMultiplier" id="test-number" placeholder="10" required>
+                        <label for="cursorForceMultiplier">cursor force multiplier</label>
+                        <input type="number" name="cursorForceMultiplier" id="test-number" placeholder="1" required>
+                        <label for="maxCursorInteractionDistance">cursor interaction distance</label>
+                        <input type="number" name="maxCursorInteractionDistance" id="test-number" placeholder="1000" required>
+                        <label for="cursorRingDistance">cursor ring distance</label>
+                        <input type="number" name="cursorRingDistance" id="test-number" placeholder="200" required>
+                    </div>
+                    <br>
+                    <h4>Sim Display Config</h4>
+                    <div class="config-section" id="sim-display-config">
+                        <label for="displayPoints">time step</label>
+                        <input type="number" name="diplayPoints" id="test-number" placeholder="true" required>
+                        <label for="displayLines">time step</label>
+                        <input type="number" name="DisplayLines" id="test-number" placeholder="false" required>
+                        <label for="frameFade">time step</label>
+                        <input type="number" name="frameFade" id="test-number" placeholder="true" required>
+                        <label for="frameFadeFactor">time step</label>
+                        <input type="number" name="frameFadeFactor" id="test-number" placeholder="0.05" required>
+                    </div>
+                    
+                    
                     <label for="test">Test</label>
                     <input type="number" name="test" id="test-number" required>
                     <input type="submit" value="Submit">
@@ -92,7 +147,8 @@
     </div>
     <script src="dist/jquery-3.7.1.js"></script>
     <script src="dist/Containers.js"></script>
-    <script src="dist/bgSim.js"></script>
+    <script src="dist/ParticleSim.js"></script>
+    <script src="dist/ParticleSimController.js"></script>
     <script src="dist/home.js"></script>
     <script src="dist/Sorts.js"></script>
     <script src="dist/SortsPlayer.js"></script>
