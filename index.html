@@ -72,69 +72,67 @@
         <div id="side-menu-wrapper">
             <a href="#" id="side-menu-button">&#8801;</a>
             <div id="side-menu">
-                <form>
-                    <h4>General Config</h4>
+                <form id="config-form" onsubmit="exportForm(`config-form`, particleSim);">
+                    <h3>General Config</h3>
                     <div class="config-section" id="general-config">
                         <label for="pointCount">point count</label>
-                        <input type="number" name="pointCount" id="test-number" placeholder="1000" required>
+                        <input type="number" name="pointCount" id="pointCount">
                         <label for="physicsStepsPerFrame">physics steps per frame</label>
-                        <input type="number" name="physicsStepsPerFrame" id="test-number" placeholder="2" required>
+                        <input type="number" name="physicsStepsPerFrame" id="physicsStepsPerFrame">
                     </div>
                     <br>
-                    <h4>Point Creation Config</h4>
+                    <h3>Point Creation Config</h3>
                     <div class="config-section" id="point-creation-config">
                         <label for="velMax">initial particle velocity</label>
-                        <input type="number" name="velMax" id="test-number" placeholder="2" required>
+                        <input type="number" step="any" name="velMax" id="velMax">
                         <label for="radiusMin">min radius</label>
-                        <input type="number" name="radiusMin" id="test-number" placeholder="10" required>
+                        <input type="number" step="any" name="radiusMin" id="radiusMin">
                         <label for="radiusMax">max radius</label>
-                        <input type="number" name="radiusMax" id="test-number" placeholder="10" required>
+                        <input type="number" step="any" name="radiusMax" id="radiusMax">
                     </div>
                     <br>
-                    <h4>Sim Physics Config</h4>
+                    <h3>Sim Physics Config</h3>
                     <div class="config-section" id="sim-physics-config">
                         <label for="timeStep">time step</label>
-                        <input type="number" name="timeStep" id="test-number" placeholder="0.05" required>
+                        <input type="number" step="any" name="timeStep" id="timeStep">
                         <label for="interactionDistance">interaction distance</label>
-                        <input type="number" name="interactionDistance" id="test-number" placeholder="100" required>
+                        <input type="number" step="any" name="interactionDistance" id="interactionDistance">
                         <label for="bounceFactor">wall bounciness</label>
-                        <input type="number" name="bounceFactor" id="test-number" placeholder="0.5" required>
+                        <input type="number" step="any" name="bounceFactor" id="bounceFactor">
                         <label for="maxVel">friction velocity threshold</label>
-                        <input type="number" name="maxVel" id="test-number" placeholder="0" required>
+                        <input type="number" step="any" name="maxVel" id="tesmaxVeltnuber">
                         <label for="frictionMultiplier">friction multiplier</label>
-                        <input type="number" name="frictionMultiplier" id="test-number" placeholder="0.02" required>
+                        <input type="number" step="any" name="frictionMultiplier" id="frictionMultiplier">
                         <label for="pointToPointCollisions">point to point collisions</label>
-                        <input type="number" name="pointToPointCollisions" id="test-number" placeholder="true" required>
+                        <input type="checkbox" name="pointToPointCollisions" id="pointToPointCollisions">
                         <label for="pointForceMultiplier">point to point force multipliers</label>
-                        <input type="number" name="pointForceMultiplier" id="test-number" placeholder="10" required>
+                        <input type="number" step="any" name="pointForceMultiplier" id="pointForceMultiplier">
+                        <label for="cursorCarryForceMultiplier">cursor carry force multiplier</label>
+                        <input type="number" step="any" name="cursorCarryForceMultiplier" id="cursorCarryForceMultiplier">
                         <label for="cursorForceMultiplier">cursor force multiplier</label>
-                        <input type="number" name="cursorForceMultiplier" id="test-number" placeholder="1" required>
-                        <label for="maxCursorInteractionDistance">cursor interaction distance</label>
-                        <input type="number" name="maxCursorInteractionDistance" id="test-number" placeholder="1000" required>
+                        <input type="number" step="any" name="cursorForceMultiplier" id="cursorForceMultiplier">
+                        <label for="maxCursorInteractionDistance">cursor interaction radius</label>
+                        <input type="number" name="maxCursorInteractionDistance" id="maxCursorInteractionDistance">
+                        <label for="maxCursorCarryDistance">cursor carry radius</label>
+                        <input type="number" name="maxCursorCarryDistance" id="maxCursorCarryDistance">
                         <label for="cursorRingDistance">cursor ring distance</label>
-                        <input type="number" name="cursorRingDistance" id="test-number" placeholder="200" required>
+                        <input type="number" name="cursorRingDistance" id="cursorRingDistance">
                     </div>
                     <br>
-                    <h4>Sim Display Config</h4>
+                    <h3>Sim Display Config</h3>
                     <div class="config-section" id="sim-display-config">
-                        <label for="displayPoints">time step</label>
-                        <input type="number" name="diplayPoints" id="test-number" placeholder="true" required>
-                        <label for="displayLines">time step</label>
-                        <input type="number" name="DisplayLines" id="test-number" placeholder="false" required>
-                        <label for="frameFade">time step</label>
-                        <input type="number" name="frameFade" id="test-number" placeholder="true" required>
-                        <label for="frameFadeFactor">time step</label>
-                        <input type="number" name="frameFadeFactor" id="test-number" placeholder="0.05" required>
+                        <label for="displayPoints">display points</label>
+                        <input type="checkbox" name="displayPoints" id="displayPoints">
+                        <label for="displayLines">display lines</label>
+                        <input type="checkbox" name="displayLines" id="displayLines">
+                        <label for="frameFade">frame fade</label>
+                        <input type="checkbox" name="frameFade" id="frameFade">
+                        <label for="frameFadeFactor">frame fade factor</label>
+                        <input type="number" step="any" name="frameFadeFactor" id="frameFadeFactor">
                     </div>
-                    
-                    
-                    <label for="test">Test</label>
-                    <input type="number" name="test" id="test-number" required>
                     <input type="submit" value="Submit">
-                    <textarea name="" id=""></textarea>
-                    <input type="radio" name="" id="">
+                    <br>
                 </form>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam culpa, commodi, quo molestiae sit voluptas facere illo aut esse eum vero ipsa, consectetur ullam earum dicta neque! A impedit amet cumque ad quod, temporibus explicabo enim, earum laboriosam maiores expedita quae. Dolorum expedita dolore consectetur aut voluptate recusandae inventore labore culpa perspiciatis nihil suscipit omnis rem error blanditiis voluptatibus nisi necessitatibus laudantium fugiat, animi officia eaque incidunt non? Iusto maxime magnam nam incidunt, repellendus corporis suscipit accusantium quo ullam architecto numquam ad exercitationem odit eos soluta molestiae voluptas accusamus pariatur. Officiis saepe rem itaque est velit nisi eius laudantium quod deleniti labore dolor sunt harum ipsam minus iure magni porro tempora, voluptatibus quidem similique ratione, repellat numquam maiores repudiandae. Doloremque culpa recusandae magni maxime quia tenetur perspiciatis! Delectus, voluptates! Nihil nam fuga fugiat quos non odio sint minima velit. Itaque ad eius deserunt sint veritatis? Omnis autem magnam corrupti recusandae ducimus voluptatum deleniti, laudantium quis accusamus officiis fugiat expedita reprehenderit obcaecati, nesciunt quaerat fugit? Nulla non doloremque, officiis repellat eveniet odio. Vitae odio ut deserunt quidem soluta in quod molestias, dignissimos, exercitationem cumque assumenda. Corporis atque numquam expedita! Aliquid rem cum quae repellat molestiae recusandae sit nihil accusantium eos, necessitatibus, veritatis accusamus. Autem optio placeat corrupti vitae. Aut alias illum dignissimos aliquam? Iure ut laudantium enim tempore eum quibusdam error vitae odio! Quos iste officiis aperiam molestiae sunt itaque tenetur ab laboriosam voluptatum quo? Iusto quibusdam voluptas incidunt tempora explicabo magnam architecto et quas, placeat itaque distinctio dolor nobis ea aliquam reiciendis dolorum asperiores mollitia animi iure debitis dolorem similique. Ex veritatis, similique earum saepe iusto quo sed voluptas repudiandae ratione quae sit voluptatum incidunt molestiae iste quos? Numquam, minus nihil? Quisquam, quaerat possimus dignissimos laboriosam laudantium consequuntur, nesciunt adipisci minus reprehenderit ipsum, distinctio eligendi excepturi reiciendis similique! Praesentium, quam?</p>
             </div>
             
         </div>
@@ -153,6 +151,10 @@
     <script src="dist/Sorts.js"></script>
     <script src="dist/SortsPlayer.js"></script>
     <script src="dist/SortsPlayerController.js"></script>
+    <script src="dist/FormData.js"></script>
+    <script type="text/javascript">
+        fillForm("config-form", particleSim);
+    </script>
 </body>
 
 

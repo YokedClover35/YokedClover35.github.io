@@ -552,7 +552,7 @@ class SimPhysicsConfig {
         this.pointForceMultiplier = 10;
         this.cursorCarryForceMultiplier = 1;
         this.cursorForceMultiplier = 3;
-        this.maxCursorInteractionDistance = 10000;
+        this.maxCursorInteractionDistance = 500;
         this.maxCursorCarryDistance = 100;
         this.cursorRingDistance = this.maxCursorInteractionDistance / 4;
     }
@@ -573,7 +573,7 @@ class DebugConfig {
 }
 class ParticleSimConfig {
     constructor() {
-        this.pointCount = 4000;
+        this.pointCount = 100;
         this.physicsStepsPerFrame = 2;
         this.simPhysicsConfig = new SimPhysicsConfig();
         this.simDisplayConfig = new SimDisplayConfig();
@@ -674,7 +674,13 @@ class ParticleSim {
         }
         else {
             this.pointsLength = this.config.pointCount;
+            for (let i = this.pointsLength; i < this.points.length; i++) {
+                this.pointGrid.removePointac(this.points[i]);
+            }
         }
+    }
+    createPointGrid() {
+        this.pointGrid = new PointGrid(this.config.simPhysicsConfig.interactionDistance);
     }
     moveAll(time) {
         for (let i = 0; i < this.pointsLength; i++) {

@@ -197,15 +197,17 @@ h2 {
 #side-menu {
     border-top: solid 2px #011a4c;
     color: #b2bed5;
-    height: 100vh;
+    height: 90vh;
+    padding-bottom: 100em;
     max-width: 0;
     overflow-x: hidden;
+    overflow-y: scroll;
     background-color: #03326c;
     transition: 0.3s;
 }
 
 #side-menu * {
-    margin: 1em;
+    margin: .5em;
 }
 
 #side-menu form .config-section{
