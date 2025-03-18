@@ -2,8 +2,9 @@
 
 let players = new Map<String, SortsPlayer>();
 
-function initializeRandom(canvas: HTMLCanvasElement, sortType:string, id: string, entries: number, animationSpeed: number) {
+function initializeRandom(canvas: HTMLCanvasElement, out: HTMLElement, sortType:string, id: string, entries: number, animationSpeed: number) {
     let player = new SortsPlayer(canvas, sortType, id);
+    player.setOut(out);
     players.set(id, player);
     player.loadRandomArray(entries, 1, entries * 2);
     player.renderFrame();

@@ -197,6 +197,24 @@ class Sorts {
         return steps;
     }
     /**
+     * Sorts A[start..end] sorted using selection sort
+     * Precondition: 0 <= start <= end <= A.length
+     */
+    selectionSort(A, start, end) {
+        this.loadNewArray(A);
+        // A[start..i] is sorted
+        for (let i = start; i < end; i++) {
+            let minIndex = i;
+            for (let j = i + 1; j < end; j++) {
+                if (this.compareAndLog(A, minIndex, j) > 0) {
+                    minIndex = j;
+                }
+            }
+            this.swapAndLog(A, i, A, minIndex);
+        }
+        this.sorted = this.copyArray(A);
+    }
+    /**
      * Sorts A[start..end] in place using insertion sort
      * Precondition: 0 <= start <= end <= A.length
      */

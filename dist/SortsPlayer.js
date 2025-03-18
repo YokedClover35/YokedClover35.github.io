@@ -1,6 +1,7 @@
 "use strict";
 class SortsPlayer {
     constructor(canvas, sortType = "insertion", id) {
+        this.out = null;
         this.marginFr = .2;
         this.gapFr = .2;
         this.defaultAnimationSpeed = 200;
@@ -23,6 +24,9 @@ class SortsPlayer {
     }
     equals(id) {
         return this.id == id;
+    }
+    setOut(out) {
+        this.out = out;
     }
     loadRandomArray(length, min, max) {
         let A = new Int32Array(length);
@@ -72,8 +76,8 @@ class SortsPlayer {
         this.defaultAnimationSpeed = ms;
     }
     applySort(A, sortName) {
-        if (sortName == "insertion") {
-            this.sort.insertionSort(A, 0, A.length);
+        if (sortName == "selection") {
+            this.sort.selectionSort(A, 0, A.length);
         }
         else if (sortName == "quick") {
             this.sort.quickSort(A, 0, A.length);
@@ -88,16 +92,17 @@ class SortsPlayer {
     setRects(A) {
         this.rects = [];
         this.tempRects = [];
-        let marginPx = this.canvas.clientWidth * this.marginFr;
-        let usableWidth = this.canvas.clientWidth - (2 * marginPx);
-        let usableHeight = this.canvas.clientHeight - (2 * marginPx);
+        let marginWidthPx = this.canvas.clientWidth * this.marginFr;
+        let marginHeightPx = this.canvas.clientHeight * this.marginFr;
+        let usableWidth = this.canvas.clientWidth - (2 * marginWidthPx);
+        let usableHeight = this.canvas.clientHeight - (2 * marginHeightPx);
         let rectHeightStep = usableHeight / this.maxOf(A);
         let rectWidth = usableWidth / ((this.gapFr + 1) * A.length - this.gapFr);
         let currentXPos = this.canvas.clientWidth * this.marginFr;
         let stepSize = rectWidth * (1 + this.gapFr);
         for (let i = 0; i < A.length; i++) {
-            this.rects.push(new Rect(A[i], currentXPos, this.canvas.clientHeight - marginPx, rectWidth, rectHeightStep * A[i], "red", true));
-            this.tempRects.push(new Rect(0, currentXPos, this.canvas.clientHeight - marginPx / 4, rectWidth, rectHeightStep * 2, "blue", false));
+            this.rects.push(new Rect(A[i], currentXPos, this.canvas.clientHeight - marginHeightPx, rectWidth, rectHeightStep * A[i], "red", true));
+            this.tempRects.push(new Rect(0, currentXPos, this.canvas.clientHeight - marginHeightPx / 4, rectWidth, rectHeightStep * 2, "blue", false));
             currentXPos += stepSize;
         }
     }
@@ -143,15 +148,20 @@ class SortsPlayer {
             }
             if (this.renderQueue.length > 0) {
                 let action = this.renderQueue.poll();
+                this.writeToOut(action);
                 this.addActionToRects(action);
             }
+        }
+    }
+    writeToOut(action) {
+        if (this.out !== null) {
+            this.out.innerHTML = action.getDescription();
         }
     }
     addActionToRects(action) {
         let type = action.type;
         let i = action.i;
         let j = action.j;
-        console.log(type);
         if (type == "swap") {
             let ix = this.rects[i].x;
             let iy = this.rects[i].y;

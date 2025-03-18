@@ -1,7 +1,8 @@
 "use strict";
 let players = new Map();
-function initializeRandom(canvas, sortType, id, entries, animationSpeed) {
+function initializeRandom(canvas, out, sortType, id, entries, animationSpeed) {
     let player = new SortsPlayer(canvas, sortType, id);
+    player.setOut(out);
     players.set(id, player);
     player.loadRandomArray(entries, 1, entries * 2);
     player.renderFrame();

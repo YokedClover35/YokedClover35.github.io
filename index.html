@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sorts Visualizer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Sorts</title>
     <link rel="stylesheet" href="css/style.css">
-    
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
 </head>
 
 <body>
@@ -14,67 +14,139 @@
         
         <main id="main-wrapper">
             <canvas id="particle-sim"></canvas>
-            <div class="overlay">
+
+            <div id="overlay">
                 <div class="box">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Obcaecati ratione, odio aliquam aliquid ipsam eum? Corporis, iusto! Aperiam minus laudantium facilis! Harum soluta quae maxime et consequuntur perferendis quaerat veritatis.
+                    <h3>What Is A Sort?</h3>
+                    <p>Sorts are a way of arranging items in a container so that they follow some order. In the examples the containers used 
+                        are a fixed length array with randomly generated integer values (whole numbers). Sorts can be used on all kinds of 
+                        data though, some examples include dates, strings (text), numbers, etc...</p>
                 </div>
                 <div class="box">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Obcaecati ratione, odio aliquam aliquid ipsam eum? Corporis, iusto! Aperiam minus laudantium facilis! Harum soluta quae maxime et consequuntur perferendis quaerat veritatis.
+                    <h3>What Makes A Sort Good?</h3>
+                    <p>Sorts that use less time or memory to complete are considered better. The way we measure how long or how much memory 
+                        something will take to complete is by using big O notation of some variable (most commonly n). You can learn more 
+                        about big O notation <a href="https://en.wikipedia.org/wiki/Big_O_notation">here</a>. A simple definition of big O 
+                        notation is a way to measure how fast the time/memory grows depending on the input size. Big O notation is by no means 
+                        the only way to measure the quality of an algorithm. Some other metrics for sorts in particular include whether the 
+                        sort is in-place (uses only the memory space it was given) and whether the sort is stable (does it keep equal items 
+                        in the same order relative to each other). As a general rule of thumb O(1) &#60; O(n) &#60; O(nlogn) &#60; O(n&#178;) 
+                        &#60; ... remember the smaller the better.</p>
                 </div>
                 <div class="box">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Obcaecati ratione, odio aliquam aliquid ipsam eum? Corporis, iusto! Aperiam minus laudantium facilis! Harum soluta quae maxime et consequuntur perferendis quaerat veritatis.
+                    <h3>What is the Difference Between Best, Avg, and Worst Case?</h3>
+                    <ul>
+                        <li>Best-Case: best-case occurs when your data is set up for your algorithm to do the least possible work. In the case 
+                            of a sort that is most likely a container that is already in sorted order. best-case is the least significant out 
+                            of the 3 cases because your algorithm is almost never going to encounter the best case in practice</li>
+                            <br>
+                        <li>Avg-Case: avg-case is short of average-case and this is the situation that your algorithm will encounter the most, 
+                            it is the average of all possible data sets. This is very important for understanding how your algorithm will run 
+                            when out in the wild.</li>
+                            <br>
+                        <li>Worst-Case: worst-case occurs when your data is set up to spite you, this represents the most work your algorithm 
+                            will ever have to do so it is very important to keep in mind. Although an algorithm may have a better worst case 
+                            runtime than another it is still important to keep in mind that practically speaking the average case is the most 
+                            important. An example of this is the worst-case runtime of quicksort is greater than the worst-case run time of 
+                            mergesort but in practice mergesort usually takes longer than quicksort. </li>
+                    </ul>
                 </div>
             </div>
         </main>
         <header>
             <nav>
-                <a id="nav-logo" href="index.html">Logo</a>
+                <a id="nav-logo" href="index.html"><img src="images/TheSorts(1).png" alt="Logo"></a>
                 <ul id="nav-bar">
                     <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-selection`) , `selection`, `mp-selection`);" onmouseleave="players.delete(`mp-selection`)">
                         <a class="nav-link" href="selectionSort.html">Selection</a>
                         <a class="nav-card" href="selectionSort.html">
                             <canvas class="mini-player" id="mp-selection"></canvas>
+                            <table>
+                                <thead>
+                                    <caption>
+                                        ---Big O Runtime---
+                                    </caption>
+                                    <tr>
+                                        <th scope="col">Best-Case</th>
+                                        <th scope="col">Avg-Case</th>
+                                        <th scope="col">Worst-Case</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <td>O(n&#178;)</td>
+                                    <td>O(n&#178;)</td>
+                                    <td>O(n&#178;)</td>
+                                </tbody>  
+                            </table>
                         </a>
                     </li>
                     <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-insertion`) , `insertion`, `mp-insertion`);" onmouseleave="players.delete(`mp-insertion`)">
                         <a class="nav-link" href="insertionSort.html">Insertion</a>
                         <a class="nav-card" href="insertionSort.html">
                             <canvas class="mini-player" id="mp-insertion"></canvas>
+                            <table>
+                                <thead>
+                                    <caption>
+                                        ---Big O Runtime---
+                                    </caption>
+                                    <tr>
+                                        <th scope="col">Best-Case</th>
+                                        <th scope="col">Avg-Case</th>
+                                        <th scope="col">Worst-Case</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <td>O(n)</td>
+                                    <td>O(n&#178;)</td>
+                                    <td>O(n&#178;)</td>
+                                </tbody>  
+                            </table>
                         </a>
                     </li>
                     <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-merge`) , `merge`, `mp-merge`);" onmouseleave="players.delete(`mp-merge`)">
                         <a class="nav-link" href="mergeSort.html">Merge</a>
                         <a class="nav-card" href="mergeSort.html">
                             <canvas class="mini-player" id="mp-merge"></canvas>
+                            <table>
+                                <thead>
+                                    <caption>
+                                        ---Big O Runtime---
+                                    </caption>
+                                    <tr>
+                                        <th scope="col">Best-Case</th>
+                                        <th scope="col">Avg-Case</th>
+                                        <th scope="col">Worst-Case</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <td>O(nlogn)</td>
+                                    <td>O(nlogn)</td>
+                                    <td>O(nlogn)</td>
+                                </tbody>  
+                            </table>
                         </a>
                     </li>
                     <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-quick`) , `quick`, `mp-quick`);" onmouseleave="players.delete(`mp-quick`)">
                         <a class="nav-link" href="quickSort.html">Quick</a>
                         <a class="nav-card" href="quickSort.html">
                             <canvas class="mini-player" id="mp-quick"></canvas>
-                            <p>heosdfoihasdiofhauipsdhf</p>
                             <table>
-                                <th>
+                                <thead>
+                                    <caption>
+                                        ---Big O Runtime---
+                                    </caption>
                                     <tr>
-                                        hi
+                                        <th scope="col">Best-Case</th>
+                                        <th scope="col">Avg-Case</th>
+                                        <th scope="col">Worst-Case</th>
                                     </tr>
-                                    <tr>
-                                        hi
-                                    </tr>
-                                </th>
+                                </thead>
+                                <tbody>
+                                    <td>O(nlogn)</td>
+                                    <td>O(nlogn)</td>
+                                    <td>O(n&#178;)</td>
+                                </tbody>  
                             </table>
-                        </a>
-                    </li>
-                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-heap`) , `heap`, `mp-heap`);" onmouseleave="players.delete(`mp-heap`)">
-                        <a class="nav-link" href="heapSort.html">Heap</a>
-                        <a class="nav-card" href="heapSort.html">
-                            <canvas class="mini-player" id="mp-heap"></canvas>
-                        </a>
-                    </li>
-                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-radix`) , `radix`, `mp-radix`);" onmouseleave="players.delete(`mp-radix`)">
-                        <a class="nav-link" href="RadixSort.html">Radix</a>
-                        <a class="nav-card" href="RadixSort.html">
-                            <canvas class="mini-player" id="mp-radix"></canvas>
                         </a>
                     </li>
                 </ul>
