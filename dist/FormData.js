@@ -54,7 +54,6 @@ function exportForm(id, sim) {
     }
     //config classes
     sim.config.pointCount = Number.parseInt(form.pointCount.value != "" ? form.pointCount.value : sim.config.pointCount);
-    sim.createPoints();
     sim.config.physicsStepsPerFrame = Number.parseInt(form.physicsStepsPerFrame.value != "" ? form.physicsStepsPerFrame.value : sim.config.physicsStepsPerFrame);
     //pointcreation
     sim.pointCreationConfig.velMax = Number.parseFloat(form.velMax.value != "" ? form.velMax.value : sim.pointCreationConfig.velMax);
@@ -63,7 +62,6 @@ function exportForm(id, sim) {
     //physics
     config.simPhysicsConfig.timeStep = Number.parseFloat(form.timeStep.value != "" ? form.timeStep.value : config.simPhysicsConfig.timeStep);
     config.simPhysicsConfig.interactionDistance = Number.parseFloat(form.interactionDistance.value != "" ? form.interactionDistance.value : config.simPhysicsConfig.interactionDistance);
-    sim.createPointGrid();
     config.simPhysicsConfig.bounceFactor = Number.parseFloat(form.bounceFactor.value != "" ? form.bounceFactor.value : config.simPhysicsConfig.bounceFactor);
     config.simPhysicsConfig.maxVel = Number.parseFloat(form.maxVel.value != "" ? form.maxVel.value : config.simPhysicsConfig.maxVel);
     config.simPhysicsConfig.frictionMultiplier = Number.parseFloat(form.frictionMultiplier.value != "" ? form.frictionMultiplier.value : config.simPhysicsConfig.frictionMultiplier);
@@ -82,4 +80,6 @@ function exportForm(id, sim) {
     //debug
     config.debugConfig.debug = form.debug.checked;
     config.debugConfig.showFps = form.showFps.checked;
+    sim.createPoints();
+    sim.createPointGrid();
 }
