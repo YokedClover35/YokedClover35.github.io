@@ -38,6 +38,10 @@ a {
     text-decoration: none;
 }
 
+p {
+    font-size: 1.1em;
+}
+
 
 table {
     border-collapse: collapse;
@@ -254,7 +258,7 @@ h2 {
 #side-menu {
     border-top: solid 2px #011a4c;
     color: #b2bed5;
-    height: 90vh;
+    height: 80vh;
     padding-bottom: 20vh;
     max-width: 0;
     overflow-x: hidden;
