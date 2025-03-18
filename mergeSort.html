@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorts Visualizer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="dist/jquery-3.7.1.js"></script>
+    <script src="dist/Containers.js"></script>
+    <script src="dist/Sorts.js"></script>
+    <script src="dist/SortsTests.js"></script>
+    <script src="dist/SortsPlayer.js"></script>
+    <script src="dist/SortsPlayerController.js"></script>
+</head>
+
+<body>
+
+    <div id="wrapper">
+        <main id="main-wrapper">
+            <div class="overlay box">
+                <h2>Insertion Sort 10</h2>
+                <canvas id="main-sort-canvas"></canvas>
+                <div id="player-controls">
+                    <img src="images/skip-to-start.png" alt="Skip To Unsorted" class="control-button" onclick="skipToUnsorted(`main`);"></img>
+                    <img src="images/step-icon.png" alt="Backward" class="control-button" onclick="stepBackward(1, `main`);"></img>
+                    <img src="images/play-pause.png" alt="Play Pause" class="control-button" onclick="playPause(`main`);"></img>
+                    <img src="images/step-icon.png" alt="Forward" class="control-button flip-img-horizontal" onclick="stepForward(1, `main`);"></img>
+                    <img src="images/skip-to-start.png" alt="Skip To Sorted" class="control-button flip-img-horizontal" onclick="skipToSorted(`main`);"></img>
+                </div>
+                
+            </div>
+        </main>
+        <header>
+            <nav>
+                
+                <a id="nav-logo" href="index.html">Logo</a>
+                <ul id="nav-bar">
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-selection`) , `selection`, `mp-selection`);" onmouseleave="players.delete(`mp-selection`)">
+                        <a class="nav-link" href="selectionSort.html">Selection</a>
+                        <a class="nav-card" href="selectionSort.html">
+                            <canvas class="mini-player" id="mp-selection"></canvas>
+                        </a>
+                    </li>
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-insertion`) , `insertion`, `mp-insertion`);" onmouseleave="players.delete(`mp-insertion`)">
+                        <a class="nav-link" href="insertionSort.html">Insertion</a>
+                        <a class="nav-card" href="insertionSort.html">
+                            <canvas class="mini-player" id="mp-insertion"></canvas>
+                        </a>
+                    </li>
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-merge`) , `merge`, `mp-merge`);" onmouseleave="players.delete(`mp-merge`)">
+                        <a class="nav-link" href="mergeSort.html">Merge</a>
+                        <a class="nav-card" href="mergeSort.html">
+                            <canvas class="mini-player" id="mp-merge"></canvas>
+                        </a>
+                    </li>
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-quick`) , `quick`, `mp-quick`);" onmouseleave="players.delete(`mp-quick`)">
+                        <a class="nav-link" href="quickSort.html">Quick</a>
+                        <a class="nav-card" href="quickSort.html">
+                            <canvas class="mini-player" id="mp-quick"></canvas>
+                        </a>
+                    </li>
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-heap`) , `heap`, `mp-heap`);" onmouseleave="players.delete(`mp-heap`)">
+                        <a class="nav-link" href="heapSort.html">Heap</a>
+                        <a class="nav-card" href="heapSort.html">
+                            <canvas class="mini-player" id="mp-heap"></canvas>
+                        </a>
+                    </li>
+                    <li class="dropdown" onmouseenter="initializeMiniPlayer(document.getElementById(`mp-radix`) , `radix`, `mp-radix`);" onmouseleave="players.delete(`mp-radix`)">
+                        <a class="nav-link" href="RadixSort.html">Radix</a>
+                        <a class="nav-card" href="RadixSort.html">
+                            <canvas class="mini-player" id="mp-radix"></canvas>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        
+        <footer>
+            <p>&#58&#41</p>
+        </footer>
+    </div>
+    <script type="text/javascript">
+        initializeRandom(document.getElementById(`main-sort-canvas`), `merge`, `main`, 30, 400);
+    </script>
+</body>
+
+
+</html>

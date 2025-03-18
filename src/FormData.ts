@@ -61,39 +61,37 @@ function exportForm(id: string, sim: ParticleSim) {
     
 
     //config classes
-    sim.config.pointCount = form.pointCount.value != "" ? form.pointCount.value : sim.config.pointCount;
+    sim.config.pointCount =Number.parseInt(form.pointCount.value != "" ? form.pointCount.value : sim.config.pointCount);
     sim.createPoints();
-    sim.config.physicsStepsPerFrame = form.physicsStepsPerFrame.value != "" ? form.physicsStepsPerFrame.value : sim.config.physicsStepsPerFrame;
+    sim.config.physicsStepsPerFrame =Number.parseInt(form.physicsStepsPerFrame.value != "" ? form.physicsStepsPerFrame.value : sim.config.physicsStepsPerFrame);
 
     //pointcreation
-    sim.pointCreationConfig.velMax = form.velMax.value != "" ? form.velMax.value : sim.pointCreationConfig.velMax;
-    sim.pointCreationConfig.radiusMin = form.radiusMin.value != "" ? form.radiusMin.value : sim.pointCreationConfig.radiusMin;
-    sim.pointCreationConfig.radiusMax = form.radiusMax.value != "" ? form.radiusMax.value : sim.pointCreationConfig.radiusMax;
+    sim.pointCreationConfig.velMax = Number.parseFloat(form.velMax.value != "" ? form.velMax.value : sim.pointCreationConfig.velMax);
+    sim.pointCreationConfig.radiusMin = Number.parseFloat(form.radiusMin.value != "" ? form.radiusMin.value : sim.pointCreationConfig.radiusMin);
+    sim.pointCreationConfig.radiusMax = Number.parseFloat(form.radiusMax.value != "" ? form.radiusMax.value : sim.pointCreationConfig.radiusMax);
 
     //physics
-    config.simPhysicsConfig.timeStep = form.timeStep.value != "" ? form.timeStep.value : config.simPhysicsConfig.timeStep;
-    config.simPhysicsConfig.interactionDistance = form.interactionDistance.value != "" ? form.interactionDistance.value : config.simPhysicsConfig.interactionDistance;
+    config.simPhysicsConfig.timeStep = Number.parseFloat(form.timeStep.value != "" ? form.timeStep.value : config.simPhysicsConfig.timeStep);
+    config.simPhysicsConfig.interactionDistance = Number.parseFloat(form.interactionDistance.value != "" ? form.interactionDistance.value : config.simPhysicsConfig.interactionDistance);
     sim.createPointGrid();
-    config.simPhysicsConfig.bounceFactor = form.bounceFactor.value != "" ? form.bounceFactor.value : config.simPhysicsConfig.bounceFactor;
-    config.simPhysicsConfig.maxVel = form.maxVel.value != "" ? form.maxVel.value : config.simPhysicsConfig.maxVel;
-    config.simPhysicsConfig.frictionMultiplier = form.frictionMultiplier.value != "" ? form.frictionMultiplier.value : config.simPhysicsConfig.frictionMultiplier;
+    config.simPhysicsConfig.bounceFactor = Number.parseFloat(form.bounceFactor.value != "" ? form.bounceFactor.value : config.simPhysicsConfig.bounceFactor);
+    config.simPhysicsConfig.maxVel = Number.parseFloat(form.maxVel.value != "" ? form.maxVel.value : config.simPhysicsConfig.maxVel);
+    config.simPhysicsConfig.frictionMultiplier = Number.parseFloat(form.frictionMultiplier.value != "" ? form.frictionMultiplier.value : config.simPhysicsConfig.frictionMultiplier);
     config.simPhysicsConfig.pointToPointCollisions = form.pointToPointCollisions.checked;
-    config.simPhysicsConfig.pointForceMultiplier = form.pointForceMultiplier.value != "" ? form.pointForceMultiplier.value : config.simPhysicsConfig.pointForceMultiplier; 
-    config.simPhysicsConfig.cursorCarryForceMultiplier = form.cursorCarryForceMultiplier.value != "" ? form.cursorCarryForceMultiplier.value : config.simPhysicsConfig.cursorCarryForceMultiplier;
-    config.simPhysicsConfig.cursorForceMultiplier = form.cursorForceMultiplier.value != "" ? form.cursorForceMultiplier.value : config.simPhysicsConfig.cursorForceMultiplier;
-    config.simPhysicsConfig.maxCursorInteractionDistance = form.maxCursorInteractionDistance.value != "" ? form.maxCursorInteractionDistance.value : config.simPhysicsConfig.maxCursorInteractionDistance;
-    config.simPhysicsConfig.maxCursorCarryDistance = form.maxCursorCarryDistance.value != "" ? form.maxCursorCarryDistance.value : config.simPhysicsConfig.maxCursorCarryDistance;
-    config.simPhysicsConfig.cursorRingDistance = form.cursorRingDistance.value != "" ? form.cursorRingDistance.value : config.simPhysicsConfig.cursorRingDistance;
+    config.simPhysicsConfig.pointForceMultiplier = Number.parseFloat(form.pointForceMultiplier.value != "" ? form.pointForceMultiplier.value : config.simPhysicsConfig.pointForceMultiplier); 
+    config.simPhysicsConfig.cursorCarryForceMultiplier = Number.parseFloat(form.cursorCarryForceMultiplier.value != "" ? form.cursorCarryForceMultiplier.value : config.simPhysicsConfig.cursorCarryForceMultiplier);
+    config.simPhysicsConfig.cursorForceMultiplier = Number.parseFloat(form.cursorForceMultiplier.value != "" ? form.cursorForceMultiplier.value : config.simPhysicsConfig.cursorForceMultiplier);
+    config.simPhysicsConfig.maxCursorInteractionDistance = Number.parseFloat(form.maxCursorInteractionDistance.value != "" ? form.maxCursorInteractionDistance.value : config.simPhysicsConfig.maxCursorInteractionDistance);
+    config.simPhysicsConfig.maxCursorCarryDistance = Number.parseFloat(form.maxCursorCarryDistance.value != "" ? form.maxCursorCarryDistance.value : config.simPhysicsConfig.maxCursorCarryDistance);
+    config.simPhysicsConfig.cursorRingDistance = Number.parseFloat(form.cursorRingDistance.value != "" ? form.cursorRingDistance.value : config.simPhysicsConfig.cursorRingDistance);
 
     //display
     config.simDisplayConfig.displayPoints = form.displayPoints.checked;
     config.simDisplayConfig.displayLines = form.displayLines.checked;
     config.simDisplayConfig.frameFade = form.frameFade.checked;
-    config.simDisplayConfig.frameFadeFactor = form.frameFadeFactor.value != "" ? form.frameFadeFactor.value : config.simDisplayConfig.frameFadeFactor;
+    config.simDisplayConfig.frameFadeFactor = Number.parseFloat(form.frameFadeFactor.value != "" ? form.frameFadeFactor.value : config.simDisplayConfig.frameFadeFactor);
 
     //debug
     config.debugConfig.debug = form.debug.checked;
     config.debugConfig.showFps = form.showFps.checked;
-
-
 }

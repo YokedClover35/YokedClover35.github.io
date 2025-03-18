@@ -315,30 +315,34 @@ class Sorts {
         let i = start;
         let j = mid;
         // temp[0..(i - start) + (j - mid)] is sorted
+        let tempIndex = start;
         while (i < mid && j < end) {
             if (this.compareAndLog(A, i, j) <= 0) {
-                this.swapAndLog(A, i, this.temp, i);
+                this.swapAndLog(A, i, this.temp, tempIndex);
                 i++;
             } else {
-                this.swapAndLog(A, j, this.temp, j);
+                this.swapAndLog(A, j, this.temp, tempIndex);
                 j++;
             }
+            tempIndex ++;
         }
         // temp[0..(i - start) + (j - mid)] is sorted
         while (i < mid) {
-            this.swapAndLog(A, i, this.temp, i);
+            this.swapAndLog(A, i, this.temp, tempIndex);
             i++;
+            tempIndex ++;
         }
         // temp[0..(i - start) + (j - mid)] is sorted
         while (j < end) {
-            this.swapAndLog(A, j, this.temp, j);
+            this.swapAndLog(A, j, this.temp, tempIndex);
             j++;
+            tempIndex ++;
         }
         // copy temp array elements to A
         this.retrieveTempAndLog(start, end, A, this.temp);
     }
 
-    mergesort(A: Int32Array, start: number, end: number) {
+    mergeSort(A: Int32Array, start: number, end: number) {
         this.loadNewArray(A);
         this.mergeSort_r(A, start, end);
         this.sorted = this.copyArray(A);
@@ -346,17 +350,18 @@ class Sorts {
 
     /** use mergesort to sort the subarray A[start..end] */
     mergeSort_r(A: Int32Array, start: number, end: number) {
-        this.logRecursiveDown(start, end);
         let length = end - start;
         let mid = Math.floor((start + end) / 2);
         if (length < 2) {
+            
             return;
         }
-
+        this.logRecursiveDown(start, end);
         this.mergeSort_r(A, start, mid);
         this.mergeSort_r(A, mid, end);
-        this.merge(A, start, mid, end);
         this.logRecursiveUp(start, end);
+
+        this.merge(A, start, mid, end);
     }
 
     /** Sort A using LSD radix sort. Uses counting sort to sort on each digit */

@@ -151,7 +151,7 @@ nav {
 
 #main-sort-canvas {
     width: 98%;
-    aspect-ratio: 2 / 1;
+    aspect-ratio: 4 / 3;
     align-self: center;
     background-color: #011a4c;
     border-radius: 1em;

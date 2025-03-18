@@ -193,6 +193,11 @@ class PointGrid {
     Precondition: n >= 0; n <= canvas's dimention
     */
     toGridCoord(n) {
+        if (Number.isNaN(Math.floor(n / this.tileSize))) {
+            console.log(this.tileSize);
+            console.log(n);
+            throw new Error;
+        }
         return Math.floor(n / this.tileSize);
     }
     drawPoints(ctx) {
@@ -648,22 +653,18 @@ class ParticleSim {
     loadConfig(config) {
         this.config = config;
         this.createPoints();
+        this.createPointGrid();
     }
     createPoints() {
-        if (this.pointsLength < this.config.pointCount) {
-            while (this.points.length < this.config.pointCount) {
-                this.points.push(Point.newFromConfig(this.pointCreationConfig));
-            }
-            this.pointsLength = this.points.length;
+        this.points = [];
+        while (this.points.length < this.config.pointCount) {
+            this.points.push(Point.newFromConfig(this.pointCreationConfig));
         }
-        else {
-            this.pointsLength = this.config.pointCount;
-            for (let i = this.pointsLength; i < this.points.length; i++) {
-                this.pointGrid.removePointac(this.points[i]);
-            }
-        }
+        this.pointsLength = this.points.length;
     }
     createPointGrid() {
+        console.log(this.config);
+        console.log(this.pointCreationConfig);
         this.pointGrid = new PointGrid(this.config.simPhysicsConfig.interactionDistance);
     }
     moveAll(time) {

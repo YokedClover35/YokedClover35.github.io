@@ -8,11 +8,10 @@ class SortsPlayer {
     renderQueue: Queue;
     rects: Rect[];
     tempRects: Rect[];
-    marginFr = .05;
+    marginFr = .2;
     gapFr = .2;
     defaultAnimationSpeed = 200;
-    offsetX = 0;
-    offsetY = 0;
+    viewPortRect = new Rect(0,0,0,0,0,"black",false);
     recursiveOffset = 50;
 
     paused = true;
@@ -58,14 +57,16 @@ class SortsPlayer {
     }
     
     skipToUnsorted() {
-        this.reset();
-        this.offsetX = 0;
-        this.offsetY = 0;
+        this.viewPortRect.x = 0;
+        this.viewPortRect.y = 0;
+        this.sort.skipToUnsorted();
+        this.setRects(this.sort.getUnsorted());
+        this.run();
     }
 
     skipToSorted() {
-        this.offsetX = 0;
-        this.offsetY = 0;
+        this.viewPortRect.x = 0;
+        this.viewPortRect.y = 0;
         this.sort.skipToSorted();
         console.log(this.sort.getSorted());
         this.setRects(this.sort.getSorted());
@@ -73,11 +74,7 @@ class SortsPlayer {
     }
 
     reset() {
-        this.offsetX = 0;
-        this.offsetY = 0;
-        this.sort.skipToUnsorted();
-        this.setRects(this.sort.getUnsorted());
-        this.run();
+        this.skipToUnsorted();
     }
 
     pause() {
@@ -101,6 +98,8 @@ class SortsPlayer {
             this.sort.insertionSort(A, 0, A.length);
         } else if (sortName == "quick") {
             this.sort.quickSort(A, 0, A.length);
+        } else if (sortName == "merge") {
+            this.sort.mergeSort(A, 0, A.length);
         } else {
             this.sort.insertionSort(A, 0, A.length);
         }
@@ -117,8 +116,8 @@ class SortsPlayer {
         let currentXPos = this.canvas.clientWidth * this.marginFr;
         let stepSize = rectWidth * (1 + this.gapFr);
         for(let i = 0; i < A.length; i++) {
-            this.rects.push(new Rect(A[i], currentXPos, this.canvas.clientHeight - marginPx, rectWidth, rectHeightStep * A[i], "red"));
-            this.tempRects.push(new Rect(0, currentXPos, this.canvas.clientHeight - marginPx - this.recursiveOffset, rectWidth, rectHeightStep * 2, "blue"))
+            this.rects.push(new Rect(A[i], currentXPos, this.canvas.clientHeight - marginPx, rectWidth, rectHeightStep * A[i], "red", true));
+            this.tempRects.push(new Rect(0, currentXPos, this.canvas.clientHeight - marginPx / 4 , rectWidth, rectHeightStep * 2, "blue", false))
             currentXPos += stepSize;
         }
     }
@@ -158,6 +157,7 @@ class SortsPlayer {
     applyAnimations(dt: number) {
         let animationsComplete = true;
         for (let i = 0; i < this.rects.length; i++) {
+            this.viewPortRect.applyAnimation(dt);
             if (!this.rects[i].applyAnimation(dt) || !this.tempRects[i].applyAnimation(dt)) {
                 animationsComplete = false;
             }
@@ -207,13 +207,13 @@ class SortsPlayer {
                 this.rects[index].addAnimation(new LinearAnimation(this.rects[index], this.defaultAnimationSpeed, 0, this.recursiveOffset, "orange"));
                 this.tempRects[index].addAnimation(new LinearAnimation(this.tempRects[index], this.defaultAnimationSpeed, 0, this.recursiveOffset, "orange"));
             }
-            this.offsetY += this.recursiveOffset;
+            this.viewPortRect.addAnimation(new LinearAnimation(this.viewPortRect, this.defaultAnimationSpeed, 0, this.recursiveOffset, "orange"));
         } else if (type == "recursiveUp") {
             for(let index = i; index < j; index++) {
                 this.rects[index].addAnimation(new LinearAnimation(this.rects[index], this.defaultAnimationSpeed, 0, -this.recursiveOffset, "orange"));
                 this.tempRects[index].addAnimation(new LinearAnimation(this.tempRects[index], this.defaultAnimationSpeed, 0, -this.recursiveOffset, "orange"));
             }
-            this.offsetY -= this.recursiveOffset;
+            this.viewPortRect.addAnimation(new LinearAnimation(this.viewPortRect, this.defaultAnimationSpeed, 0, -this.recursiveOffset, "orange"));
         } else if (type == "retrieveTemp") {
             for (let index = i; index < j; index++) {
                 let regx = this.rects[index].x;
@@ -240,8 +240,8 @@ class SortsPlayer {
         this.resizeCanvas();
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             for (let i = 0; i < this.rects.length; i++) {
-            this.rects[i].draw(this.ctx, this.offsetX, this.offsetY);
-            this.tempRects[i].draw(this.ctx, this.offsetX, this.offsetY);
+            this.rects[i].draw(this.ctx, this.viewPortRect.x, this.viewPortRect.y);
+            this.tempRects[i].draw(this.ctx, this.viewPortRect.x, this.viewPortRect.y);
             
         }
     }
@@ -260,14 +260,16 @@ class Rect {
     width: number;
     height: number;
     color: string;
+    visible: boolean;
     animationQueue: Queue = new Queue;
-    constructor(value: number, x: number, y: number, width: number, height: number, color: string = "white") {
+    constructor(value: number, x: number, y: number, width: number, height: number, color: string = "white", visible: boolean) {
         this.value = value;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.color = color;
+        this.visible = visible;
     }
 
     setValue(value: number) {
@@ -289,8 +291,10 @@ class Rect {
     }
 
     draw(ctx: CanvasRenderingContext2D, xOffset: number, yOffset: number) {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x - xOffset, this.y - this.height - yOffset, this.width, this.height)
+        if (this.visible) {
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.x - xOffset, this.y - this.height - yOffset, this.width, this.height)
+        }
     }
 
     addAnimation(animation: RectAnimation) {
