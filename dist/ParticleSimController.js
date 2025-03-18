@@ -57,3 +57,30 @@ window.addEventListener("mouseup", function (e) {
             break;
     }
 });
+let prevX = 0;
+let prevY = 0;
+window.addEventListener("touchstart", function (e) {
+    particleSim.ct.button1 = true;
+    var rect = canvas.getBoundingClientRect(), scaleX = canvas.width / rect.width, scaleY = canvas.height / rect.height;
+    let prevPos = e.touches.item(e.touches.length - 1);
+    prevX = (prevPos.clientX - rect.left) * scaleX;
+    prevY = (prevPos.clientY - rect.top) * scaleY;
+    particleSim.ct.x = prevX;
+    particleSim.ct.y = prevY;
+});
+window.addEventListener("touchend", function (e) {
+    particleSim.ct.button1 = false;
+});
+// el.addEventListener("touchcancel", handleCancel);
+canvas.addEventListener("touchmove", function (e) {
+    e.preventDefault();
+    var rect = canvas.getBoundingClientRect(), scaleX = canvas.width / rect.width, scaleY = canvas.height / rect.height;
+    let currentPos = e.touches.item(e.touches.length - 1);
+    let currentX = (currentPos.clientX - rect.left) * scaleX;
+    let currentY = (currentPos.clientY - rect.top) * scaleY;
+    particleSim.ct.x = currentX;
+    particleSim.ct.y = currentY;
+    let dx = currentX - prevX;
+    let dy = currentY - prevY;
+    particleSim.ct.addVelocityEntries(dx, dy);
+});
